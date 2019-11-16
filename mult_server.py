@@ -1,3 +1,5 @@
+# server-client code reference: https://kuntalchandra.wordpress.com/2017/08/23/python-socket-programming-server-client-application-using-threads/
+
 import socket
 import sys
 import traceback
@@ -46,24 +48,42 @@ def client_thread(connection, ip, port, players, max_buffer_size = 5120):
     is_active = True
 
     while is_active:
-    	# if (len(players) < 2):
-    	# 	connection.sendall(bytes("Waiting for all players to connect...\n, 'utf8'))
+        if (len(players)==2):
+            is_active = start_game(connection, players, ip, port, max_buffer_size, is_active)
 
-    	if (len(players)==2):
-	        menu = "[1] Start game\n[2] Quit\n"
-	        connection.sendall(bytes(menu, 'utf8'))
+        # if (len(players)==2):
+        #     data = "----cards-------"
+        #     connection.sendall(bytes(data, 'utf8'))
 
-	        client_input = receive_input(connection, max_buffer_size)
+        #     client_input = receive_input(connection, max_buffer_size)
 
-	        if "--QUIT--" in client_input:
-	            print("Client is requesting to quit")
-	            connection.close()
-	            print("Connection " + ip + ":" + port + " closed")
-	            is_active = False
-	        else:
-	            print("{}".format(client_input))
-	            connection.sendall("-".encode("utf8"))
+        #     if "--QUIT--" in client_input:
+        #         print("Client is requesting to quit")
+        #         connection.close()
+        #         print("Connection " + ip + ":" + port + " closed")
+        #         is_active = False
+        #     else:
+        #         print("{}".format(client_input))
+        #         connection.sendall("-".encode("utf8"))
 
+
+def start_game(connection, players, ip, port, max_buffer_size, is_active):
+    data = "----cards-------"
+    connection.sendall(bytes(data, 'utf8'))
+
+    client_input = receive_input(connection, max_buffer_size)
+
+
+    if "--QUIT--" in client_input:
+        print("Client is requesting to quit")
+        connection.close()
+        print("Connection " + ip + ":" + port + " closed")
+        is_active = False
+    else:
+        print("{}".format(client_input))
+        connection.sendall("-".encode("utf8"))
+
+    return is_active
 
 def receive_input(connection, max_buffer_size):
     client_input = connection.recv(max_buffer_size)

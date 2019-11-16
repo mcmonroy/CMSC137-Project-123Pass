@@ -1,3 +1,5 @@
+# server-client code reference: https://kuntalchandra.wordpress.com/2017/08/23/python-socket-programming-server-client-application-using-threads/
+
 import socket
 import sys
 
@@ -13,11 +15,11 @@ def main():
         sys.exit()
 
     print("Waiting for all players to connect...\n")
-    menu = soc.recv(5120)
-    print(str(menu, 'utf-8'))
+    data = soc.recv(5120) #receive board data from server
+    print(str(data, 'utf-8'))
 
     print("Enter 'quit' to exit")
-    message = input(" -> ")
+    message = input("Enter card to be passed: ")
 
     while message != 'quit':
         soc.sendall(message.encode("utf8"))
