@@ -32,26 +32,46 @@ def start_server():
     # infinite loop- do not reset for every requests
     while True:
         connection, address = soc.accept()
-        players.append(game.create_p(len(players) ,[],connection))
+        print("len:", len(players))
+        players.append(game.create_p(len(players) ,[], connection, address))
         print(players)
         ip, port = str(address[0]), str(address[1])
         print("Connected with " + ip + ":" + port)
 
-        try:
-            Thread(target=client_thread, args=(connection, ip, port, players)).start()
-        except:
-            print("Thread did not start.")
-            traceback.print_exc()
+        # '''
+        if (len(players)==2):
+            for i in range (len(players)):
+                try:
+                    Thread(target=client_thread, args=players[i]).start()
+                except:
+                    print("Thread did not start.")
+                    traceback.print_exc()                
+        # '''
+
+        # try:
+        #     Thread(target=client_thread, args=(connection, ip, port, players)).start()
+        # except:
+        #     print("Thread did not start.")
+        #     traceback.print_exc()
 
     soc.close()
 
-
-def client_thread(connection, ip, port, players, max_buffer_size = 5120):
+# '''
+def client_thread(player, max_buffer_size=5120):
     is_active = True
+    # print(pid, socket, win, addr)
 
     while is_active:
-        if (len(players)==2):
-            is_active = start_game(connection, players, ip, port, max_buffer_size, is_active)
+        # print("ola")
+        is_active = start_game(player, max_buffer_size, is_active)
+
+# '''
+# def client_thread(connection, ip, port, players, max_buffer_size = 5120):
+#     is_active = True
+
+#     while is_active:
+#         if (len(players)==2):
+#             is_active = start_game(connection, players, ip, port, max_buffer_size, is_active)
 
         # if (len(players)==2):
         #     data = "----cards-------"
@@ -68,22 +88,47 @@ def client_thread(connection, ip, port, players, max_buffer_size = 5120):
         #         print("{}".format(client_input))
         #         connection.sendall("-".encode("utf8"))
 
+'''
+def start_game(player, max_buffer_size, is_active):
+    generate board for this player 
+    data = board
+    player.get("connection").send(bytes(data, 'utf8'))
+'''
+# def start_game(connection, players, ip, port, max_buffer_size, is_active):
 
-def start_game(connection, players, ip, port, max_buffer_size, is_active):
+#     data = "----cards-------"
+#     connection.sendall(bytes(data, 'utf8'))
+
+#     client_input = receive_input(connection, max_buffer_size)
+
+
+#     if "--QUIT--" in client_input:
+#         print("Client is requesting to quit")
+#         connection.close()
+#         print("Connection " + ip + ":" + port + " closed")
+#         is_active = False
+#     else:
+#         print("{}".format(client_input))
+#         connection.sendall("-".encode("utf8"))
+
+#     return is_active
+
+def start_game(player, max_buffer_size, is_active):
+
     data = "----cards-------"
-    connection.sendall(bytes(data, 'utf8'))
+    player.get("socket").send(bytes(data, 'utf8'))
 
-    client_input = receive_input(connection, max_buffer_size)
+    # client_input = receive_input(connection, max_buffer_size)
 
 
     if "--QUIT--" in client_input:
         print("Client is requesting to quit")
-        connection.close()
+        player.get("socket").close()
         print("Connection " + ip + ":" + port + " closed")
         is_active = False
     else:
         print("{}".format(client_input))
-        connection.sendall("-".encode("utf8"))
+        player.get("socket").sendall("-".encode("utf8"))
 
     return is_active
 

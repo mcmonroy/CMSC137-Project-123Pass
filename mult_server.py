@@ -68,7 +68,9 @@ def client_thread(connection, ip, port, players, max_buffer_size = 5120):
 
 
 def start_game(connection, players, ip, port, max_buffer_size, is_active):
-    data = "----cards-------"
+    data = "------cards-------\n"
+    cards = ["AH 2H 3H 4H","AD 2D 3D 4D","AC 2C 3C 4C","AS 2S 3S 4S"]
+    
     connection.sendall(bytes(data, 'utf8'))
 
     client_input = receive_input(connection, max_buffer_size)
