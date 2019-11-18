@@ -15,3 +15,13 @@ server side:
 
 server receives code, gets first character of code from client
 
+--------------------
+if completed num of players
+s: send board to clients
+c: input card to be passed
+s: send "123 pass!"
+c: press enter, send to server, (initial action: pass)
+s: check action, if P, turn cards, send updated board to clients, repeat until action is F
+s: if action is F, send notice to other clients ("tap now")
+c: type T or enter to tap
+s: check last client to tap, send results to client
