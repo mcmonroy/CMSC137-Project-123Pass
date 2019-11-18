@@ -16,6 +16,8 @@ def start_server():
     port = 8888         # arbitrary non-privileged port
     players = []
 
+    max_players = int(input("Enter max no. of players: "))
+
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)   # SO_REUSEADDR flag tells the kernel to reuse a local socket in TIME_WAIT state, without waiting for its natural timeout to expire
     print("Socket created")
@@ -26,7 +28,7 @@ def start_server():
         print("Bind failed. Error : " + str(sys.exc_info()))
         sys.exit()
 
-    soc.listen(5)       # queue up to 5 requests
+    soc.listen(max_players)    # queue up to 5 requests
     print("Socket now listening")
 
     # infinite loop- do not reset for every requests
@@ -37,9 +39,12 @@ def start_server():
         ip, port = str(address[0]), str(address[1])
         print("Connected with " + ip + ":" + port)
 
-        if (len(players)==2):
+        if (len(players)==max_players):
+            deck = game.generate_deck(max_players)
+            print(deck)
             for i in range (len(players)):
                 try:
+                    players[i]['hand']=game.generate_hand(deck)
                     print(players[i])
                     Thread(target=client_thread, args=(players[i],)).start()
                 except:
@@ -104,8 +109,9 @@ def start_game(player, max_buffer_size, is_active):
 #     return is_active
 
 def start_game(player, max_buffer_size, is_active):
-
-    data = player.get("id")
+    
+    # passing of board to players
+    data = game.get_board(player)
     player.get("conn").send(bytes(data, 'utf8'))
 
     client_input = receive_input(player.get("conn"), max_buffer_size)

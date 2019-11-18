@@ -48,21 +48,37 @@ def generate_hand(deck_list):
 
 	return hand
 
-def display_board(players, num):
-	print("***************************************")
-	for i in range(len(players)):
-		print(players[i].get("id") + "\t"),
-	print("")
-	for i in range(len(players)):
-		print(str(players[i].get("win")) + "\t"),
-	print("")
-	print("---------------------------------------")
-	print("You are " + players[num].get("id"))
-	print("---------------------------------------")
-	for i in range(len(players[num].get("hand"))):
-		print(players[num].get("hand")[i] + "\t"),
-	print("")
-	print("***************************************")
+# def display_board(players, num):
+# 	print("***************************************")
+# 	for i in range(len(players)):
+# 		print(players[i].get("id") + "\t"),
+# 	print("")
+# 	for i in range(len(players)):
+# 		print(str(players[i].get("win")) + "\t"),
+# 	print("")
+# 	print("---------------------------------------")
+# 	print("You are " + players[num].get("id"))
+# 	print("---------------------------------------")
+# 	for i in range(len(players[num].get("hand"))):
+# 		print(players[num].get("hand")[i] + "\t"),
+# 	print("")
+# 	print("***************************************")
+
+def get_board(player):
+	board = ""
+	board+="***************************************\n"
+	# print(players[i].get("id") + "\t"),
+	# print("")
+	# print(str(players[i].get("win")) + "\t"),
+	# print("")
+	board+="---------------------------------------\n"
+	board+="You are " + player.get("id") + "\n"
+	board+="---------------------------------------\n"
+	board+=str(player.get("hand")) + "\n"
+	board+=""
+	board+="***************************************\n"
+
+	return board
 
 def check_id(players_id, code_id):
 	if players_id == code_id:
