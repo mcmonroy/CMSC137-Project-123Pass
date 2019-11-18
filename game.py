@@ -9,6 +9,17 @@ def create_player(player_num, hand):
 
 	return player
 
+def create_p(player_num, hand, soc):
+	player = {
+		"id" : "P" + str(player_num + 1),
+		"hand" : hand,
+		"win" : 0,
+		"socket" : soc
+	}
+
+	return player
+
+
 def generate_deck(player_num):
 	rank = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 	suit = ['H', 'D', 'C', 'S']
@@ -26,7 +37,7 @@ def generate_deck(player_num):
 
 	return card_deck
 
-def generate_hand(player_num, deck_list):
+def generate_hand(deck_list):
 	hand = []
 	
 	for j in range(4):
@@ -76,80 +87,86 @@ def check_win(player_hand):
 
 
 ############################ END OF FUNCTION DEFINITIONS #############################
+def start():
+	deck = generate_deck(2)
+	
 
-players = []
-win_flag = False
-id_flag = False
-card_flag = False
-turn_tap = []
 
-num_player = int(raw_input("Enter number of players: "))
-deck = generate_deck(num_player)
+def game():
+	players = []
+	win_flag = False
+	id_flag = False
+	card_flag = False
+	turn_tap = []
 
-for i in range(num_player):
+	# num_player = int(raw_input("Enter number of players: "))
+	num_player = 2
+	deck = generate_deck(num_player)
+
+	# for i in range(num_player):
 	card_hand = generate_hand(num_player, deck)
 	players.append(create_player(i, card_hand))
 
-while True:
-	turn_cards = []
-
-	for i in range(num_player):
-		while True:
-			display_board(players, i)
-			code = str(raw_input("Enter code: ")).upper()
-
-			action = code[0:1]
-			player_id = "P" + code[1:2]
-			play_card = code[2:len(code)]
-
-			# print(action, player_id, play_card)
-
-			id_flag = check_id(players[i].get("id"), player_id)
-			if id_flag == False:
-				continue
-
-			if action == 'P':
-				card_flag = check_card(players[i].get("hand"), play_card)
-				if card_flag == False:
-					continue
-				else:
-					players[i].get("hand").remove(play_card)
-					turn_cards.append(play_card)
-					display_board(players, i)
-					break
-
-			elif action == 'F':
-				win_flag = check_win(players[i].get("hand"))
-				if win_flag == True:
-					players[i]["win"] = 1
-					break
-				else:
-					print("Winning conditions still not met")
-			elif action == 'T':
-				if win_flag == True:
-					print("Tap successful")
-					turn_tap.append(-i)
-					break
-				else:
-					print("Tap invalid, there is no winner yet")
-			else:
-				print("Invalid action")
-
-			if win_flag == True and len(turn_tap) == num_player - 1:
-				for i in range(num_player):
-					if players[i].get("win") == 1:
-						continue
-
-					players[i]["win"] = (turn_tap.index(-i) + 1) * -1
-					display_board(players, i)
-				break
-
-		print(turn_cards)
-		print(turn_tap)
-
-	if win_flag == False:
-		turn_cards.append(turn_cards.pop(0))
-		print(turn_cards)
+	while True:
+		turn_cards = []
 
 		for i in range(num_player):
-			players[i].get("hand").append(turn_cards[i])
+			while True:
+				display_board(players, i)
+				code = str(raw_input("Enter code: ")).upper()
+
+				action = code[0:1]
+				player_id = "P" + code[1:2]
+				play_card = code[2:len(code)]
+
+				# print(action, player_id, play_card)
+
+				id_flag = check_id(players[i].get("id"), player_id)
+				if id_flag == False:
+					continue
+
+				if action == 'P':
+					card_flag = check_card(players[i].get("hand"), play_card)
+					if card_flag == False:
+						continue
+					else:
+						players[i].get("hand").remove(play_card)
+						turn_cards.append(play_card)
+						display_board(players, i)
+						break
+
+				elif action == 'F':
+					win_flag = check_win(players[i].get("hand"))
+					if win_flag == True:
+						players[i]["win"] = 1
+						break
+					else:
+						print("Winning conditions still not met")
+				elif action == 'T':
+					if win_flag == True:
+						print("Tap successful")
+						turn_tap.append(-i)
+						break
+					else:
+						print("Tap invalid, there is no winner yet")
+				else:
+					print("Invalid action")
+
+				if win_flag == True and len(turn_tap) == num_player - 1:
+					for i in range(num_player):
+						if players[i].get("win") == 1:
+							continue
+
+						players[i]["win"] = (turn_tap.index(-i) + 1) * -1
+						display_board(players, i)
+					break
+
+			print(turn_cards)
+			print(turn_tap)
+
+		if win_flag == False:
+			turn_cards.append(turn_cards.pop(0))
+			print(turn_cards)
+
+			for i in range(num_player):
+				players[i].get("hand").append(turn_cards[i])
