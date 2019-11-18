@@ -26,7 +26,7 @@ def generate_deck(player_num):
 
 	return card_deck
 
-def generate_hand(player_num, deck_list):
+def generate_hand(deck_list):
 	hand = []
 	
 	for j in range(4):
@@ -39,16 +39,16 @@ def generate_hand(player_num, deck_list):
 def display_board(players, num):
 	print("***************************************")
 	for i in range(len(players)):
-		print(players[i].get("id") + "\t"),
+		print(players[i].get("id") + "\t", end='')
 	print("")
 	for i in range(len(players)):
-		print(str(players[i].get("win")) + "\t"),
+		print(str(players[i].get("win")) + "\t", end=''),
 	print("")
 	print("---------------------------------------")
 	print("You are " + players[num].get("id"))
 	print("---------------------------------------")
 	for i in range(len(players[num].get("hand"))):
-		print(players[num].get("hand")[i] + "\t"),
+		print(players[num].get("hand")[i] + "\t", end=''),
 	print("")
 	print("***************************************")
 
@@ -83,11 +83,11 @@ id_flag = False
 card_flag = False
 turn_tap = []
 
-num_player = int(raw_input("Enter number of players: "))
+num_player = int(input("Enter number of players: "))
 deck = generate_deck(num_player)
 
 for i in range(num_player):
-	card_hand = generate_hand(num_player, deck)
+	card_hand = generate_hand(deck)
 	players.append(create_player(i, card_hand))
 
 while True:
@@ -96,7 +96,7 @@ while True:
 	for i in range(num_player):
 		while True:
 			display_board(players, i)
-			code = str(raw_input("Enter code: ")).upper()
+			code = str(input("Enter code: ")).upper()
 
 			action = code[0:1]
 			player_id = "P" + code[1:2]
