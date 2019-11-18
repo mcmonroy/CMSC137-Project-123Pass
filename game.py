@@ -9,12 +9,12 @@ def create_player(player_num, hand):
 
 	return player
 
-def create_p(player_num, hand, soc, addr):
+def create_p(player_num, hand, conn, addr):
 	player = {
 		"id" : "P" + str(player_num + 1),
 		"hand" : hand,
 		"win" : 0,
-		"socket" : soc,
+		"conn" : conn,
 		"address" : addr
 	}
 

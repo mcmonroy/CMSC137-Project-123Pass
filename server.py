@@ -34,35 +34,25 @@ def start_server():
         connection, address = soc.accept()
         print("len:", len(players))
         players.append(game.create_p(len(players) ,[], connection, address))
-        print(players)
         ip, port = str(address[0]), str(address[1])
         print("Connected with " + ip + ":" + port)
 
-        # '''
         if (len(players)==2):
             for i in range (len(players)):
                 try:
-                    Thread(target=client_thread, args=players[i]).start()
+                    print(players[i])
+                    Thread(target=client_thread, args=(players[i],)).start()
                 except:
                     print("Thread did not start.")
                     traceback.print_exc()                
-        # '''
-
-        # try:
-        #     Thread(target=client_thread, args=(connection, ip, port, players)).start()
-        # except:
-        #     print("Thread did not start.")
-        #     traceback.print_exc()
 
     soc.close()
 
-# '''
+
 def client_thread(player, max_buffer_size=5120):
     is_active = True
-    # print(pid, socket, win, addr)
-
+   
     while is_active:
-        # print("ola")
         is_active = start_game(player, max_buffer_size, is_active)
 
 # '''
@@ -115,20 +105,20 @@ def start_game(player, max_buffer_size, is_active):
 
 def start_game(player, max_buffer_size, is_active):
 
-    data = "----cards-------"
-    player.get("socket").send(bytes(data, 'utf8'))
+    data = player.get("id")
+    player.get("conn").send(bytes(data, 'utf8'))
 
-    # client_input = receive_input(connection, max_buffer_size)
+    client_input = receive_input(player.get("conn"), max_buffer_size)
 
 
     if "--QUIT--" in client_input:
         print("Client is requesting to quit")
-        player.get("socket").close()
-        print("Connection " + ip + ":" + port + " closed")
+        player.get("conn").close()
+        print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
         is_active = False
     else:
         print("{}".format(client_input))
-        player.get("socket").sendall("-".encode("utf8"))
+        player.get("conn").sendall("-".encode("utf8"))
 
     return is_active
 
