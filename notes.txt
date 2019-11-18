@@ -1,0 +1,17 @@
+
+when client connects to server, server sends client an id
+
+
+game proper:
+
+game begins, initial value of code == pass
+player enters card to be passed
+inside client, data to be forwarded to server will be 
+concat code+player_id+card then send to server
+
+example: P1AH
+
+server side:
+
+server receives code, gets first character of code from client
+
