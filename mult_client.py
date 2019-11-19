@@ -5,17 +5,23 @@ import sys
 
 def main():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    host = "127.0.0.1"
-    port = 8888
+    if len(sys.argv) == 1:
+        HOST = '0.0.0.0'
+    else:
+        HOST = sys.argv[1]
+
+    PORT = 8888
+    SERVER = (HOST, PORT)
+    BUFFER = 5120
 
     try:
-        soc.connect((host, port))
+        soc.connect((SERVER))
     except:
         print("Connection error")
         sys.exit()
 
     print("Waiting for all players to connect...\n")
-    data = soc.recv(5120) #receive board data from server
+    data = soc.recv(BUFFER)
     print(str(data, 'utf-8'))
 
     print("Enter 'quit' to exit")
@@ -23,7 +29,7 @@ def main():
 
     while message != 'quit':
         soc.sendall(message.encode("utf8"))
-        if soc.recv(5120).decode("utf8") == "-":
+        if soc.recv(BUFFER).decode("utf8") == "-":
             pass        # null operation
 
         message = input(" -> ")
