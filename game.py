@@ -11,7 +11,7 @@ def create_player(player_num, hand):
 
 def create_p(player_num, hand, conn, addr):
 	player = {
-		"id" : "P" + str(player_num + 1),
+		"id" : str(player_num + 1),
 		"hand" : hand,
 		"win" : 0,
 		"conn" : conn,
@@ -72,7 +72,7 @@ def get_board(player):
 	# print(str(players[i].get("win")) + "\t"),
 	# print("")
 	board+="---------------------------------------\n"
-	board+="You are " + player.get("id") + "\n"
+	board+="You are P" + player.get("id") + "\n"
 	board+="---------------------------------------\n"
 	board+=str(player.get("hand")) + "\n"
 	board+=""

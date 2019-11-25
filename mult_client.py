@@ -37,12 +37,15 @@ def main():
     print("Enter 'quit' to exit")
     message = input("Enter card to be passed: ")
 
+    # message = get_data() return input
+
     while message != 'quit':
         msg = ''
         if message != 'f' and message != 't':
-            msg = 'p'+message
+            msg = 'p'+p_id+message
 
         soc.send(bytes(msg, 'utf-8'))
+        print("Waiting for")
 
         # soc.sendall(message.encode("utf8"))
         if soc.recv(BUFFER).decode("utf8") == "-":

@@ -18,6 +18,7 @@ SERVER = (HOST, PORT)
 BUFFER = 5120
 
 players = []
+turn_cards = {} # will hold the cards to be passed
 max_players = int(input("Enter max no. of players: "))
 
 
@@ -98,15 +99,23 @@ def start_game(player, max_buffer_size, is_active):
         is_active = False
     else:
         if 'P' in client_input:
+            turn_cards.update({ client_input[1] : client_input[2:] })
+            
             print("yass")
 
         print("{}".format(client_input))
         player.get("conn").sendall("-".encode("utf8"))
 
         '''
-        # 'PAD'
-        client_input[1:] == AD
+        # 'P1AD'
+        client_input[1] == p_id
+        client_input[2:] == AD
+        
+        while hindi pa nagpapass other players, wait tayo
+        pag nagpasa na lahat, tsaka ipasa yung card and
+        display board for all players, then repeat
 
+        while len()
         
         '''
 
