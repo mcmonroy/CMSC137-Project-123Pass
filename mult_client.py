@@ -2,6 +2,7 @@
 
 import socket
 import sys
+import game
 
 def main():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,7 +26,13 @@ def main():
 
     print("Waiting for all players to connect...\n")
     data = soc.recv(BUFFER)
-    print(str(data, 'utf-8'))
+    d_str = str(data, 'utf-8') 
+    d_str = d_str.split("|")
+    
+    p_id = d_str[0]
+    p_hand = d_str[1]
+    print(game.get_board(p_id, p_hand))
+    # print(str(data, 'utf-8'))
 
     print("Enter 'quit' to exit")
     message = input("Enter card to be passed: ")

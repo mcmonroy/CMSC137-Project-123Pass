@@ -13,7 +13,6 @@ if len(sys.argv) == 1:
 else:
     HOST = sys.argv[1]
 
-# host = "127.0.0.1"
 PORT = 8888         # arbitrary non-privileged port
 SERVER = (HOST, PORT)
 BUFFER = 5120
@@ -54,7 +53,7 @@ def start_server():
                 deck = game.generate_deck(max_players) 
                 # print(deck)
               
-              	#creating threads
+                #creating threads
                 for i in range (len(players)):
                     try:
                         players[i]['hand']=game.generate_hand(deck) #cards per player
@@ -84,7 +83,9 @@ def client_thread(player, max_buffer_size=5120):
 def start_game(player, max_buffer_size, is_active):
     
     # passing of board to players
-    data = game.get_board(player)
+    #data = game.get_board(player)
+
+    data = player.get("id") + "|" + str(player.get("hand"))
     player.get("conn").send(bytes(data, 'utf8'))
 
     client_input = receive_input(player.get("conn"), max_buffer_size)
