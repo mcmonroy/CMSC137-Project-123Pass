@@ -6,9 +6,12 @@ import sys
 def main():
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     if len(sys.argv) == 1:
-        HOST = '0.0.0.0'
+        print("Proper usage: python/python3 mult_client.py <ip_address_of_server>")
+        print("Type 'ifconfig' in the terminal of the server to know its ip address.")
+        exit()
     else:
         HOST = sys.argv[1]
+
 
     PORT = 8888
     SERVER = (HOST, PORT)
