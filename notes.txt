@@ -25,3 +25,11 @@ s: check action, if P, turn cards, send updated board to clients, repeat until a
 s: if action is F, send notice to other clients ("tap now")
 c: type T or enter to tap
 s: check last client to tap, send results to client
+
+
+if message != quit
+
+elif message != fin and message != tap:
+
+AD
+

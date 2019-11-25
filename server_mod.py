@@ -66,7 +66,7 @@ def start_server():
         except KeyboardInterrupt:
             print("W: interrupt received, stopping…")
             break
-        # atexit.register(close_socket, soc)                    
+        atexit.register(close_socket, soc)                    
     
     soc.close()
 
@@ -96,8 +96,18 @@ def start_game(player, max_buffer_size, is_active):
         print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
         is_active = False
     else:
+        if 'P' in client_input:
+            print("yass")
+
         print("{}".format(client_input))
         player.get("conn").sendall("-".encode("utf8"))
+
+        '''
+        # 'PAD'
+        client_input[1:] == AD
+
+        
+        '''
 
     return is_active
 

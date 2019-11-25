@@ -31,11 +31,19 @@ def main():
     message = input("Enter card to be passed: ")
 
     while message != 'quit':
-        soc.sendall(message.encode("utf8"))
+        msg = ''
+        if message != 'f' and message != 't':
+            msg = 'p'+message
+
+        soc.send(bytes(msg, 'utf-8'))
+
+        # soc.sendall(message.encode("utf8"))
         if soc.recv(BUFFER).decode("utf8") == "-":
             pass        # null operation
 
         message = input(" -> ")
+
+
 
     soc.send(b'--quit--')
 
