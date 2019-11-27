@@ -40,20 +40,19 @@ def main():
     # message = get_data() return input
 
     while message != 'quit':
-        msg = ''
-        if message != 'f' and message != 't':
-            msg = 'p'+p_id+message
+        soc.send(bytes(message, 'utf-8'))
+        print("Waiting for other players...")
 
-        soc.send(bytes(msg, 'utf-8'))
-        print("Waiting for")
+        data = soc.recv(BUFFER)
+        print(str(data, 'utf-8'))
+
+        print("Enter 'quit' to exit")
+        message = input("Enter card to be passed: ")
+
 
         # soc.sendall(message.encode("utf8"))
         if soc.recv(BUFFER).decode("utf8") == "-":
             pass        # null operation
-
-        message = input(" -> ")
-
-
 
     soc.send(b'--quit--')
 

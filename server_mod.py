@@ -89,8 +89,8 @@ def start_game(player, max_buffer_size, is_active):
     data = player.get("id") + "|" + str(player.get("hand"))
     player.get("conn").send(bytes(data, 'utf8'))
 
-    client_input = receive_input(player.get("conn"), max_buffer_size)
-
+    client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
+    print("{}".format(client_input))
 
     if "--QUIT--" in client_input:
         print("Client is requesting to quit")
@@ -102,6 +102,7 @@ def start_game(player, max_buffer_size, is_active):
             turn_cards.update({ client_input[1] : client_input[2:] })
             
             print("yass")
+            print(turn_cards)
 
         print("{}".format(client_input))
         player.get("conn").sendall("-".encode("utf8"))
@@ -129,15 +130,30 @@ def receive_input(connection, max_buffer_size):
         print("The input size is greater than expected {}".format(client_input_size))
 
     decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
-    result = process_input(decoded_input)
+    print(decoded_input)
 
-    return result
+    return decoded_input
 
 
-def process_input(input_str):
+def process_input(player, input_str):
     # print("Processing the input received from client")
+    card_flag = False
+    message = ''
 
-    return str(input_str).upper()
+    client_message = str(input_str).upper()
+
+    if client_message != 'F' and client_message != 'T':
+        print(client_message)
+
+        card_flag = game.check_card(player.get("hand"), client_message)
+
+        if card_flag == True:
+            message = "P" + str(player.get("id")) + client_message
+        else:
+            data = "The code does not match with any of your cards on hand"
+            player.get("conn").send(bytes(data, 'utf8'))
+
+    return message
 
 if __name__ == "__main__":
     main()

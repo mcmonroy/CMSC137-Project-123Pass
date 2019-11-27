@@ -64,7 +64,7 @@ def generate_hand(deck_list):
 # 	print("")
 # 	print("***************************************")
 
-def get_board(player):
+def get_board(player_id, player_hand):
 	board = ""
 	board+="***************************************\n"
 	# print(players[i].get("id") + "\t"),
@@ -72,9 +72,9 @@ def get_board(player):
 	# print(str(players[i].get("win")) + "\t"),
 	# print("")
 	board+="---------------------------------------\n"
-	board+="You are P" + player.get("id") + "\n"
+	board+="You are P" + player_id + "\n"
 	board+="---------------------------------------\n"
-	board+=str(player.get("hand")) + "\n"
+	board+=str(player_hand) + "\n"
 	board+=""
 	board+="***************************************\n"
 
@@ -91,7 +91,6 @@ def check_card(players_card, code_card):
 	if code_card in players_card:
 		return True
 	else:
-		print("The code does not match with any of your cards on hand")
 		return False
 
 def check_win(player_hand):
