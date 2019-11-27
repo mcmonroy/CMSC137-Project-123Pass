@@ -167,7 +167,9 @@ def process_input(player, input_str):
     client_message = str(input_str).upper()
     print(client_message)
 
-    if client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
+    if "--QUIT--" in client_message:
+        return client_message
+    elif client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
         card_flag = game.check_card(player.get("hand"), client_message)
 
         if card_flag == True:
