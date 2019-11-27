@@ -29,12 +29,13 @@ def main():
     print("Waiting for all players to connect...\n")
     # data = soc.recv(BUFFER)
     # d_str = str(data, 'utf-8') 
-    msg = receive_input(soc)
-    print(msg, msg[0])
+    msg = receive_input()
+    # print(msg, msg[0])
     action = msg[0]
     message = ""
     #B-display board
-    if action == "B":
+    if action == "B": 
+        print("askfnkn")
         d_str = msg[1:].split("|")
         p_id = d_str[0]
         p_hand = d_str[1]
@@ -47,15 +48,11 @@ def main():
         print("ssf")
         #do something for tapping 
 
-    # print("Enter 'quit' to exit")
-    # message = input("Enter card to be passed: ")
-
-    # message = get_data() return input()
-
+    
     
 
 
-    soc.send(b'--quit--')
+    
 def loop(p_id, message):
     while message != 'quit':
         msg = ''
@@ -63,27 +60,33 @@ def loop(p_id, message):
             msg = 'p'+p_id+message
 
         soc.send(bytes(msg, 'utf-8'))
-        print("Waiting for")
+        print("Waiting for other players...")
+
+        # data = soc.recv(BUFFER)
+        # print(str(data, 'utf-8'))
+
+        message = ask_input("c")
 
         # soc.sendall(message.encode("utf8"))
         if soc.recv(BUFFER).decode("utf8") == "-":
             pass        # null operation
 
-        message = input(" -> ")
+
+    soc.send(b'--quit--')
 
 
-def receive_input(connection):
-    msg = str(connection.recv(BUFFER), 'utf-8')
+def receive_input():
+    msg = str(soc.recv(BUFFER), 'utf-8')
     return msg
 
 def ask_input(i_type):
     if i_type == "c":
         client_input = input("Enter card to be passed: ")
-    send_to_server()
+    send_to_server(client_input)
     return client_input
 
 def send_to_server(message):
-    SERVER.send(bytes(message, 'utf-8'))
+    soc.sendall(bytes(message, 'utf-8'))
 
 if __name__ == "__main__":
     main()
