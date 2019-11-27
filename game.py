@@ -97,7 +97,6 @@ def check_win(player_hand):
 	print(player_hand)
 	for i in range(len(player_hand) - 1):
 		if player_hand[i][0:1] != player_hand[i + 1][0:1]:
-			print("Hand incomplete, try again")
 			return False
 	return True
 

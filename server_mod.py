@@ -8,6 +8,7 @@ from threading import Thread
 import game
 import atexit
 
+
 if len(sys.argv) == 1:
     HOST = '0.0.0.0'
 else:
@@ -19,6 +20,8 @@ BUFFER = 5120
 
 players = []
 turn_cards = {} # will hold the cards to be passed
+win_flag = False
+
 max_players = int(input("Enter max no. of players: "))
 
 
@@ -82,15 +85,14 @@ def client_thread(player, max_buffer_size=5120):
 
 
 def start_game(player, max_buffer_size, is_active):
-    
+    global win_flag
     # passing of board to players
     #data = game.get_board(player)
 
-    data = player.get("id") + "|" + str(player.get("hand"))
-    player.get("conn").send(bytes(data, 'utf8'))
+    board_data = player.get("id") + "|" + str(player.get("hand"))
+    player.get("conn").send(bytes(board_data, 'utf8'))
 
     client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
-    print("{}".format(client_input))
 
     if "--QUIT--" in client_input:
         print("Client is requesting to quit")
@@ -101,8 +103,31 @@ def start_game(player, max_buffer_size, is_active):
         if 'P' in client_input:
             turn_cards.update({ client_input[1] : client_input[2:] })
             
-            print("yass")
             print(turn_cards)
+            player.get("hand").remove(client_input[2:])
+            print(player.get("hand"))
+        elif 'F' in client_input:
+            if win_flag == True:
+                data = "Boo"
+                player.get("conn").send(bytes(data, 'utf8'))
+            else:
+                win_flag = game.check_win(player.get("hand"))
+
+                if win_flag == True:
+                    data = "Grats"
+                    player.get("conn").send(bytes(data, 'utf8'))
+                    player["win"] = 1
+                    print(player.get("win"))
+                else:
+                    data = "Boo"
+                    player.get("conn").send(bytes(data, 'utf8'))
+        elif 'T' in client_input:
+            if win_flag == True:
+                data = "Grats"
+                player.get("conn").send(bytes(data, 'utf8'))
+            else:
+                data = "Boo"
+                player.get("conn").send(bytes(data, 'utf8'))
 
         print("{}".format(client_input))
         player.get("conn").sendall("-".encode("utf8"))
@@ -130,7 +155,6 @@ def receive_input(connection, max_buffer_size):
         print("The input size is greater than expected {}".format(client_input_size))
 
     decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
-    print(decoded_input)
 
     return decoded_input
 
@@ -141,10 +165,9 @@ def process_input(player, input_str):
     message = ''
 
     client_message = str(input_str).upper()
+    print(client_message)
 
-    if client_message != 'F' and client_message != 'T':
-        print(client_message)
-
+    if client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
         card_flag = game.check_card(player.get("hand"), client_message)
 
         if card_flag == True:
@@ -152,6 +175,12 @@ def process_input(player, input_str):
         else:
             data = "The code does not match with any of your cards on hand"
             player.get("conn").send(bytes(data, 'utf8'))
+    elif client_message == 'F' or client_message == 'T' or client_message == "--QUIT--":
+        message = client_message
+    else:
+        data = "Invalid input!"
+        player.get("conn").send(bytes(data, 'utf8'))
+
 
     return message
 
