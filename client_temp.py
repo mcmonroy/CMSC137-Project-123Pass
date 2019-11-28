@@ -23,8 +23,9 @@ while menu:
     print("***************************************")
     print("\t1-2-3-Pass!")
     print("***************************************")
-    print("\t[1] How to play\n[2] Play Game\n[3] Quit")
-    choice = input("Choice: ")
+    print("\t[1] How to play\n\t[2] Play Game\n\t[3] Quit")
+    
+    choice = int(input("Choice: "))
 
     if choice == 2:
         menu = False
