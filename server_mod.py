@@ -114,13 +114,18 @@ def start_game(player, max_buffer_size, is_active):
             player.get("hand").remove(client_input[2:])
             print(player.get("hand"))
                         
-            not_complete = True
-            while not_complete:
-                if len(turn_cards) == max_players:
-                    pass_cards()
-                    not_complete = False
+            # not_complete = True
+            # while not_complete:
+            #     if len(turn_cards) == max_players:
+            #         pass_cards()
+            #         not_complete = False
 
-            turn_cards.clear()
+            if len(turn_cards) == max_players:
+                    pass_cards()
+                    turn_cards.clear()
+                    print("{}".format(client_input))
+                    player.get("conn").sendall("-".encode("utf8"))
+
 
 
         elif 'F' in client_input:
@@ -138,6 +143,9 @@ def start_game(player, max_buffer_size, is_active):
                 else:
                     data = "Boo"
                     player.get("conn").send(bytes(data, 'utf8'))
+
+            print("{}".format(client_input))
+            player.get("conn").sendall("-".encode("utf8"))
         elif 'T' in client_input:
             if win_flag == True:
                 data = "Grats"
@@ -146,8 +154,8 @@ def start_game(player, max_buffer_size, is_active):
                 data = "Boo"
                 player.get("conn").send(bytes(data, 'utf8'))
 
-        print("{}".format(client_input))
-        player.get("conn").sendall("-".encode("utf8"))
+            print("{}".format(client_input))
+            player.get("conn").sendall("-".encode("utf8"))
 
         '''
         # 'P1AD'

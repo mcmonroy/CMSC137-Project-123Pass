@@ -64,12 +64,15 @@ def loop(p_id, message):
 
         # data = soc.recv(BUFFER)
         # print(str(data, 'utf-8'))
+        # while (soc.recv())
+
+        if soc.recv(BUFFER).decode("utf8") == "-":
+            pass        # null operation
 
         message = ask_input("c")
 
         # soc.sendall(message.encode("utf8"))
-        if soc.recv(BUFFER).decode("utf8") == "-":
-            pass        # null operation
+       
 
 
     soc.send(b'--quit--')
@@ -90,4 +93,3 @@ def send_to_server(message):
 
 if __name__ == "__main__":
     main()
-    
