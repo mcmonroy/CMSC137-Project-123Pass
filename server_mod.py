@@ -88,7 +88,7 @@ def pass_cards():
     for player in players:
         p_id = int(player.get("id")) #1
         index = str((p_id % max_players) + 1) #id ng pagkukuhaan nung pinasang card sa kanya
-        player.get("hand").append(turn_cards.pop(index))
+        player.get("hand").append(turn_cards.get(index))
 
 
 def start_game(player, max_buffer_size, is_active):
@@ -120,6 +120,7 @@ def start_game(player, max_buffer_size, is_active):
                     pass_cards()
                     not_complete = False
 
+            turn_cards.clear()
 
 
         elif 'F' in client_input:
