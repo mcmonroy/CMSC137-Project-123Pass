@@ -17,6 +17,24 @@ PORT = 8888
 SERVER = (HOST, PORT)
 BUFFER = 5120
 
+menu = True
+
+while menu:
+    print("***************************************")
+    print("\t1-2-3-Pass!")
+    print("***************************************")
+    print("\t[1] How to play\n[2] Play Game\n[3] Quit")
+    choice = input("Choice: ")
+
+    if choice == 2:
+        menu = False
+    elif choice == 3:
+        print("Bye!")
+        exit()
+    elif choice == 1:
+        print("Lam mo na yon")
+
+
 try:
     soc.connect((SERVER))
 except:
