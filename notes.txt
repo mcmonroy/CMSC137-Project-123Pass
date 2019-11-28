@@ -33,3 +33,6 @@ elif message != fin and message != tap:
 
 AD
 
+2  3  1
+p1 p2 p3
+p3 p1 p2

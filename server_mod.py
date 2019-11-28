@@ -83,13 +83,20 @@ def client_thread(player, max_buffer_size=5120):
     while is_active:
         is_active = start_game(player, max_buffer_size, is_active)
 
+def pass_cards():
+
+    for player in players:
+        p_id = int(player.get("id")) #1
+        index = str((p_id % max_players) + 1) #id ng pagkukuhaan nung pinasang card sa kanya
+        player.get("hand").append(turn_cards.pop(index))
+
 
 def start_game(player, max_buffer_size, is_active):
     global win_flag
     # passing of board to players
     #data = game.get_board(player)
 
-    board_data = player.get("id") + "|" + str(player.get("hand"))
+    board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
     player.get("conn").send(bytes(board_data, 'utf8'))
 
     client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
@@ -106,6 +113,15 @@ def start_game(player, max_buffer_size, is_active):
             print(turn_cards)
             player.get("hand").remove(client_input[2:])
             print(player.get("hand"))
+                        
+            not_complete = True
+            while not_complete:
+                if len(turn_cards) == max_players:
+                    pass_cards()
+                    not_complete = False
+
+
+
         elif 'F' in client_input:
             if win_flag == True:
                 data = "Boo"
@@ -167,7 +183,7 @@ def process_input(player, input_str):
     client_message = str(input_str).upper()
     print(client_message)
 
-    if "--QUIT--" in client_message:
+    if client_message == 'F' or client_message == 'T' or client_message == "--QUIT--":
         return client_message
     elif client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
         card_flag = game.check_card(player.get("hand"), client_message)
@@ -177,12 +193,9 @@ def process_input(player, input_str):
         else:
             data = "The code does not match with any of your cards on hand"
             player.get("conn").send(bytes(data, 'utf8'))
-    elif client_message == 'F' or client_message == 'T' or client_message == "--QUIT--":
-        message = client_message
     else:
         data = "Invalid input!"
         player.get("conn").send(bytes(data, 'utf8'))
-
 
     return message
 
