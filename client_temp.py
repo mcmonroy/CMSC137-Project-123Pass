@@ -78,9 +78,15 @@ def loop(p_id, message):
         # print(str(data, 'utf-8'))
         # while (soc.recv())
 
-        if soc.recv(BUFFER).decode("utf8") == "-":
-            pass        # null operation
+        # if soc.recv(BUFFER).decode("utf8") == "-":
+        #     pass        # null operation
 
+        msg = receive_input()
+
+        d_str = msg[1:].split("|")
+        p_id = d_str[0]
+        p_hand = d_str[1]
+        print(game.get_board(p_id, p_hand))
         message = ask_input("c")
 
         # soc.sendall(message.encode("utf8"))

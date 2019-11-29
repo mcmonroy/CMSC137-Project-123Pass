@@ -122,7 +122,8 @@ def start_game(player, max_buffer_size, is_active):
                 turn_cards.clear()
             
                 print("{}".format(client_input))
-                player.get("conn").sendall("-".encode("utf8"))
+                deck = player.get("id") + "|" + str(player.get("hand"))
+                player.get("conn").send(bytes(deck, 'utf8'))
 
         elif 'F' in client_input:
             if win_flag == True:
