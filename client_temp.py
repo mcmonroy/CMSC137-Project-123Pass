@@ -44,14 +44,12 @@ except:
 
 def main():
 
-
     print("Waiting for all players to connect...\n")
-    # data = soc.recv(BUFFER)
-    # d_str = str(data, 'utf-8') 
     msg = receive_input()
-    # print(msg, msg[0])
+    
     action = msg[0]
     message = ""
+    
     #B-display board
     if action == "B": 
         print("askfnkn")
@@ -61,15 +59,10 @@ def main():
         print(game.get_board(p_id, p_hand))
         message = ask_input("c")
         loop(p_id, message)
-
-        # print(str(data, 'utf-8'))
+        
     elif action == "T":
         print("ssf")
         #do something for tapping 
-
-    
-    
-
 
     
 def loop(p_id, message):

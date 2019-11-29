@@ -21,9 +21,9 @@ BUFFER = 5120
 players = []
 turn_cards = {} # will hold the cards to be passed
 win_flag = False
+passed_already = False
 
 max_players = int(input("Enter max no. of players: "))
-
 
 def main():
     start_server()
@@ -42,7 +42,6 @@ def start_server():
 
     soc.listen(max_players)    # queue up to 5 requests
     print("Socket now listening")
-
 
     # infinite loop- do not reset for every requests
     while True:
@@ -73,26 +72,29 @@ def start_server():
     
     soc.close()
 
-
 def close_socket(soc):
     soc.close()
 
 def client_thread(player, max_buffer_size=5120):
+    global passed_already
     is_active = True
    
     while is_active:
         is_active = start_game(player, max_buffer_size, is_active)
+        passed_already = False
+
 
 def pass_cards():
 
     for player in players:
-        p_id = int(player.get("id")) #1
+        p_id = int(player.get("id"))
         index = str((p_id % max_players) + 1) #id ng pagkukuhaan nung pinasang card sa kanya
         player.get("hand").append(turn_cards.get(index))
 
 
 def start_game(player, max_buffer_size, is_active):
     global win_flag
+    global passed_already
     # passing of board to players
     #data = game.get_board(player)
 
@@ -113,20 +115,14 @@ def start_game(player, max_buffer_size, is_active):
             print(turn_cards)
             player.get("hand").remove(client_input[2:])
             print(player.get("hand"))
-                        
-            # not_complete = True
-            # while not_complete:
-            #     if len(turn_cards) == max_players:
-            #         pass_cards()
-            #         not_complete = False
 
-            if len(turn_cards) == max_players:
-                    pass_cards()
-                    turn_cards.clear()
-                    print("{}".format(client_input))
-                    player.get("conn").sendall("-".encode("utf8"))
-
-
+            if len(turn_cards) == max_players and not passed_already:
+                pass_cards()
+                passed_already = True
+                turn_cards.clear()
+            
+                print("{}".format(client_input))
+                player.get("conn").sendall("-".encode("utf8"))
 
         elif 'F' in client_input:
             if win_flag == True:
@@ -157,19 +153,6 @@ def start_game(player, max_buffer_size, is_active):
             print("{}".format(client_input))
             player.get("conn").sendall("-".encode("utf8"))
 
-        '''
-        # 'P1AD'
-        client_input[1] == p_id
-        client_input[2:] == AD
-        
-        while hindi pa nagpapass other players, wait tayo
-        pag nagpasa na lahat, tsaka ipasa yung card and
-        display board for all players, then repeat
-
-        while len()
-        
-        '''
-
     return is_active
 
 def receive_input(connection, max_buffer_size):
@@ -182,7 +165,6 @@ def receive_input(connection, max_buffer_size):
     decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
 
     return decoded_input
-
 
 def process_input(player, input_str):
     # print("Processing the input received from client")

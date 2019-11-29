@@ -49,3 +49,5 @@ MGA KAILANGAN PANG  GAWIN:
 > end game detection, F and T options
 
 > data flow diagram
+
+> maayos na pag close ni server
