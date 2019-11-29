@@ -122,33 +122,32 @@ def start_game(player, max_buffer_size, is_active):
                 turn_cards.clear()
             
                 print("{}".format(client_input))
-                deck = player.get("id") + "|" + str(player.get("hand"))
-                player.get("conn").send(bytes(deck, 'utf8'))
+                player.get("conn").sendall("-".encode("utf8"))
 
         elif 'F' in client_input:
             if win_flag == True:
-                data = "Boo"
+                data = "Someone already finished, enter 'T' to tap"
                 player.get("conn").send(bytes(data, 'utf8'))
             else:
                 win_flag = game.check_win(player.get("hand"))
 
                 if win_flag == True:
-                    data = "Grats"
+                    data = "Congratulations, you win!"
                     player.get("conn").send(bytes(data, 'utf8'))
                     player["win"] = 1
                     print(player.get("win"))
                 else:
-                    data = "Boo"
+                    data = "Hand incomplete, try again \n Winning conditions still not met"
                     player.get("conn").send(bytes(data, 'utf8'))
 
             print("{}".format(client_input))
             player.get("conn").sendall("-".encode("utf8"))
         elif 'T' in client_input:
             if win_flag == True:
-                data = "Grats"
+                data = "Tap successful"
                 player.get("conn").send(bytes(data, 'utf8'))
             else:
-                data = "Boo"
+                data = "Tap invalid, there is no winner yet"
                 player.get("conn").send(bytes(data, 'utf8'))
 
             print("{}".format(client_input))

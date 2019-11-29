@@ -67,11 +67,8 @@ def main():
     
 def loop(p_id, message):
     while message != 'quit':
-        msg = ''
-        if message != 'f' and message != 't':
-            msg = 'p'+p_id+message
-
-        soc.send(bytes(msg, 'utf-8'))
+        send_to_server(message)
+        print(receive_input())
         print("Waiting for other players...")
 
         # data = soc.recv(BUFFER)
