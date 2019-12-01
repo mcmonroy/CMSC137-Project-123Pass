@@ -58,15 +58,18 @@ def connect():
 def start_game():
     in_game = True
     all_connected = False     
+    # msg =''
     print("Waiting for all players to connect...\n")
-    while !all_connected:
+    while all_connected:
         msg = receive_input()
+        print(msg)
         if msg == "C": #complete players
             all_connected = True
     
     while in_game:
         message = receive_input()
-        action = msg[0]
+        print(message)
+        action = message[0]
         # message = ""
     
     #B-display board
@@ -78,7 +81,7 @@ def start_game():
             print(game.get_board(p_id, p_hand))
 
             client_input = ask_input("Enter card to be passed: ")
-            send_to_server(client_input)
+            send_to_server("P", client_input)
             # loop(p_id, message)
             
         elif action == "T":
@@ -94,7 +97,7 @@ def loop(p_id, message):
 
         soc.send(bytes(msg, 'utf-8'))
         print("Waiting for other players...")
-
+ 
         # data = soc.recv(BUFFER)
         # print(str(data, 'utf-8'))
         # while (soc.recv())
@@ -123,8 +126,8 @@ def ask_input(input_msg):
     client_input = input(input_msg)
     return client_input
 
-def send_to_server(message):
-    soc.sendall(bytes(message, 'utf-8'))
+def send_to_server(action, message):
+    soc.sendall(bytes(action + "|" + message, 'utf-8'))
 
 if __name__ == "__main__":
     main()
