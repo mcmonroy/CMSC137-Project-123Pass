@@ -53,7 +53,10 @@ def start_server():
             print("Connected with " + ip + ":" + port)
 
             if (len(players)==max_players):  #all expected players have connected
-                deck = game.generate_deck(max_players) 
+                # soc.sendall(bytes("C", 'utf'))
+                # send_data(player[i], "C", "")
+                    
+                deck = game.generate_deck(max_players)
                 # print(deck)
               
                 #creating threads
@@ -101,7 +104,8 @@ def start_game(player, max_buffer_size, is_active):
     in_game = True
     # passing of board to players
     #data = game.get_board(player)
-    send_data(player, "C", "")
+    # send_data(player, "C", "")
+   
     send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
 
     while in_game:
@@ -114,10 +118,11 @@ def start_game(player, max_buffer_size, is_active):
             in_game = False
         else:
             if 'P' in client_input:
-                turn_cards.update({ client_input[1] : client_input[2:] })
+                client_input = client_input.split("|")
+                turn_cards.update({ client_input[1][0] : client_input[1][1:] })
                 
                 print(turn_cards)
-                player.get("hand").remove(client_input[2:])
+                player.get("hand").remove(client_input[1][1:])
                 print(player.get("hand"))
 
                 if len(turn_cards) == max_players and not passed_already:
@@ -125,8 +130,10 @@ def start_game(player, max_buffer_size, is_active):
                     passed_already = True
                     turn_cards.clear()
                 
-                    print("{}".format(client_input))
-                    player.get("conn").sendall("-".encode("utf8"))
+                    # print("{}".format(client_input))
+                if passed_already:
+                    send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
+                    # player.get("conn").sendall("-".encode("utf8"))
 
             elif 'F' in client_input:
                 if win_flag == True:

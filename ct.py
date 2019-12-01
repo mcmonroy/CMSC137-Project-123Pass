@@ -57,23 +57,26 @@ def connect():
 
 def start_game():
     in_game = True
-    all_connected = False     
+    # not_ready = True     
     # msg =''
     print("Waiting for all players to connect...\n")
-    while all_connected:
-        msg = receive_input()
-        print(msg)
-        if msg == "C": #complete players
-            all_connected = True
+    # while not_ready:
+    #     msg = receive_input()
+    #     # print(msg)
+    #     if msg == "C": #complete players
+    #         not_ready = False
     
     while in_game:
         message = receive_input()
         print(message)
         action = message[0]
+        print(action)
         # message = ""
     
     #B-display board
         if action == "B": 
+            os.system('cls' if os.name == 'nt' else 'clear')
+    
             print("askfnkn")
             d_str = message[1:].split("|")
             p_id = d_str[0]
@@ -81,12 +84,15 @@ def start_game():
             print(game.get_board(p_id, p_hand))
 
             client_input = ask_input("Enter card to be passed: ")
-            send_to_server("P", client_input)
+            send_to_server("P", p_id + client_input)
             # loop(p_id, message)
+            print("Waiting for other players...")
+ 
             
         elif action == "T":
             print("ssf")
             #do something for tapping 
+
 
     
 def loop(p_id, message):
@@ -107,7 +113,7 @@ def loop(p_id, message):
         if d[0] == "-":
             pass        # null operation
    
-        print(game.get_board(d[1], d[2]))
+        # print(game.get_board(d[1], d[2]))
         message = ask_input("c")
        
 
