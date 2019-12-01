@@ -33,7 +33,18 @@ while menu:
         print("Bye!")
         exit()
     elif choice == 1:
-        print("Lam mo na yon")
+        print("***************************************")
+        print("\tHOW TO PLAY")
+        print("***************************************")
+        print("* Enter the card you wish to pass. If *")
+        print("* you have already completed a set of *")
+        print("* the same number and of the four sui-*")
+        print("* ts, enter 'F' to signify your fini- *")
+        print("* sh. If another player finishes first*")
+        print("* enter 'T' to tap. The first to fini-*")
+        print("* sh is the winner and the last to tap*")
+        print("* loses.                              *")
+        print("***************************************")
 
 
 try:

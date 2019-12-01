@@ -51,3 +51,16 @@ MGA KAILANGAN PANG  GAWIN:
 > data flow diagram
 
 > maayos na pag close ni server
+
+***************************************
+\tHOW TO PLAY
+***************************************
+* Enter the card you wish to pass. If *
+* you have already completed a set of *
+* the same number and of the four sui-*
+* ts, enter 'F' to signify your fini- *
+* sh. If another player finishes first*
+* enter 'T' to tap. The first to fini-*
+* sh is the winner and the last to tap*
+* looses.                             *
+***************************************
