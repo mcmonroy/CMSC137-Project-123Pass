@@ -134,8 +134,8 @@ def start_game():
             else:
                 if "QUIT" in client_input:
                     print("Client is requesting to quit")
-                    player.get("conn").close()
-                    print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
+                    players[i].get("conn").close()
+                    print("Connection " + str(players[i].get("address")[0]) + ":" + str(players[i].get("address")[1]) + " closed")
                     is_active = False
                     in_game = False
                 else:
@@ -165,32 +165,32 @@ def start_game():
                     elif 'F' in client_input:
                         if win_flag == True:
                             data = "Boo"
-                            player.get("conn").send(bytes(data, 'utf8'))
+                            players[i].get("conn").send(bytes(data, 'utf8'))
                         else:
-                            win_flag = game.check_win(player.get("hand"))
+                            win_flag = game.check_win(players[i].get("hand"))
 
                             if win_flag == True:
                                 data = "Grats"
-                                player.get("conn").send(bytes(data, 'utf8'))
-                                player["win"] = 1
-                                print(player.get("win"))
+                                players[i].get("conn").send(bytes(data, 'utf8'))
+                                players[i]["win"] = 1
+                                print(players[i].get("win"))
                             else:
                                 data = "Boo"
-                                player.get("conn").send(bytes(data, 'utf8'))
+                                players[i].get("conn").send(bytes(data, 'utf8'))
 
                         print("{}".format(client_input))
-                        player.get("conn").sendall("-".encode("utf8"))
+                        players[i].get("conn").sendall("-".encode("utf8"))
                     elif 'T' in client_input:
                         if win_flag == True:
                             data = "Grats"
-                            player.get("conn").send(bytes(data, 'utf8'))
+                            players[i].get("conn").send(bytes(data, 'utf8'))
                         else:
                             data = "Boo"
-                            player.get("conn").send(bytes(data, 'utf8'))
+                            players[i].get("conn").send(bytes(data, 'utf8'))
 
                         print("{}".format(client_input))
-                        d = "-" + "|" + player.get("id") + "|" + str(player.get("hand"))
-                        player.get("conn").sendall(d.encode("utf8"))
+                        d = "-" + "|" + players[i].get("id") + "|" + str(players[i].get("hand"))
+                        players[i].get("conn").sendall(d.encode("utf8"))
 
         #---------------------------------------------------------------
    
