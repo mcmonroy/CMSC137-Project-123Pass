@@ -130,6 +130,7 @@ def start_game(player, max_buffer_size, is_active):
                     passed_already = True
                     turn_cards.clear()
                 
+                
                     # print("{}".format(client_input))
                 if passed_already:
                     send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
