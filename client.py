@@ -72,7 +72,13 @@ def start_game():
         # message = ""
     
         if action == "E":
-            print(message[1:])
+            # print(message[2:])
+            # p_id = message[1]
+            print("Error msg: " + message)
+
+            d_str = message.split("|")
+            p_id = d_str[1][0]
+            p_hand = d_str[1][1:]
             client_input = ask_input("Enter card to be passed: ")
             if client_input == 'F' or client_input == 'T':
                 send_to_server(client_input, p_id)
@@ -82,14 +88,14 @@ def start_game():
         #B-display board
         elif action == "B": 
             os.system('cls' if os.name == 'nt' else 'clear')
-    
+            print(message)
             print("askfnkn")
             d_str = message[1:].split("|")
             p_id = d_str[0]
             p_hand = d_str[1]
             print(game.get_board(p_id, p_hand))
 
-            client_input = ask_input("Enter card to be passed: ")
+            client_input  = ask_input("Enter card to be passed: ")
             if client_input == 'F' or client_input == 'T':
                 send_to_server(client_input, p_id)
             else:

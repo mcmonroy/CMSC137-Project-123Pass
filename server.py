@@ -128,7 +128,7 @@ def start_game():
         
         for i in range(len(players)):
             client_input = process_input(players[i], receive_input(players[i].get("conn")))
-            print(client_input)
+            print("cleiterdfgh: ", client_input)
             if client_input[0] == "E":
                 send_data(players[i], client_input, "")
             else:
@@ -162,9 +162,9 @@ def start_game():
                         #     send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
                         #     # player.get("conn").sendall("-".encode("utf8"))
 
-                    elif 'F' in client_input:
+                    elif client_input[0] == 'F':
                         if win_flag == True:
-                            data = "Boo"
+                            data = "Boo1"
                             players[i].get("conn").send(bytes(data, 'utf8'))
                         else:
                             win_flag = game.check_win(players[i].get("hand"))
@@ -175,17 +175,17 @@ def start_game():
                                 players[i]["win"] = 1
                                 print(players[i].get("win"))
                             else:
-                                data = "Boo"
+                                data = "Boo2"
                                 players[i].get("conn").send(bytes(data, 'utf8'))
 
                         print("{}".format(client_input))
                         players[i].get("conn").sendall("-".encode("utf8"))
-                    elif 'T' in client_input:
+                    elif client_input[0] == 'T':
                         if win_flag == True:
                             data = "Grats"
                             players[i].get("conn").send(bytes(data, 'utf8'))
                         else:
-                            data = "Boo"
+                            data = "Boo3"
                             players[i].get("conn").send(bytes(data, 'utf8'))
 
                         print("{}".format(client_input))
@@ -215,7 +215,7 @@ def process_input2(input_str):
 def process_input(player, input_str):
     # print("Processing the input received from client")
     card_flag = False
-    message = ''
+    data = ''
 
     client_message = str(input_str).upper()
     print(client_message)
@@ -223,20 +223,23 @@ def process_input(player, input_str):
     if client_message == 'F' or client_message == 'T' or client_message == "--QUIT--":
         return client_message
     elif client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
-        card_flag = game.check_card(player.get("hand"), client_message)
+        p_id = client_message.split("|")[1][0]
+        card = client_message.split("|")[1][1:]
+        
+        card_flag = game.check_card(players[int(p_id)-1].get("hand"), card)
 
         if card_flag == True:
             return client_message
         else:
-            data = "The code does not match with any of your cards on hand"
+            data = "E|" + p_id + "The code does not match with any of your cards on hand"
             send_data(player, "E", data)
             # player.get("conn").send(bytes(data, 'utf8'))
     else:
-        data = "Invalid input!"
+        data = "E|" + p_id + "Invalid input!"
         send_data(player, "E", data)
         # player.get("conn").send(bytes(data, 'utf8'))
 
-    return message
+    return data
 
 if __name__ == "__main__":
     main()
