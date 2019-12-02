@@ -82,7 +82,10 @@ def start_game():
             print(game.get_board(p_id, p_hand))
 
             client_input = ask_input("Enter card to be passed: ")
-            send_to_server("P", p_id + client_input)
+            if client_input != "F" or client_input != "T":
+                send_to_server("P", p_id + client_input)
+            else:
+                send_to_server(client_input, "")
             # loop(p_id, message)
             print("Waiting for other players...")
  

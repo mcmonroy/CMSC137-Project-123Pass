@@ -190,62 +190,7 @@ def start_game():
                         player.get("conn").sendall(d.encode("utf8"))
 
         #---------------------------------------------------------------
-    # board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
-    # player.get("conn").send(bytes(board_data, 'utf8'))
-
-    # client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
-
-    # if "--QUIT--" in client_input:
-    #     print("Client is requesting to quit")
-    #     player.get("conn").close()
-    #     print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
-    #     is_active = False
-    # else:
-    #     if 'P' in client_input:
-    #         turn_cards.update({ client_input[1] : client_input[2:] })
-            
-    #         print(turn_cards)
-    #         player.get("hand").remove(client_input[2:])
-    #         print(player.get("hand"))
-
-    #         if len(turn_cards) == max_players and not passed_already:
-    #             pass_cards()
-    #             passed_already = True
-    #             turn_cards.clear()
-            
-    #             print("{}".format(client_input))
-    #             player.get("conn").sendall("-".encode("utf8"))
-
-    #     elif 'F' in client_input:
-    #         if win_flag == True:
-    #             data = "Boo"
-    #             player.get("conn").send(bytes(data, 'utf8'))
-    #         else:
-    #             win_flag = game.check_win(player.get("hand"))
-
-    #             if win_flag == True:
-    #                 data = "Grats"
-    #                 player.get("conn").send(bytes(data, 'utf8'))
-    #                 player["win"] = 1
-    #                 print(player.get("win"))
-    #             else:
-    #                 data = "Boo"
-    #                 player.get("conn").send(bytes(data, 'utf8'))
-
-    #         print("{}".format(client_input))
-    #         player.get("conn").sendall("-".encode("utf8"))
-    #     elif 'T' in client_input:
-    #         if win_flag == True:
-    #             data = "Grats"
-    #             player.get("conn").send(bytes(data, 'utf8'))
-    #         else:
-    #             data = "Boo"
-    #             player.get("conn").send(bytes(data, 'utf8'))
-
-    #         print("{}".format(client_input))
-    #         d = "-" + "|" + player.get("id") + "|" + str(player.get("hand"))
-    #         player.get("conn").sendall(d.encode("utf8"))
-
+   
     return is_active
 
 def receive_input(conn):
