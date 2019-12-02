@@ -71,8 +71,16 @@ def start_game():
         print(action)
         # message = ""
     
-    #B-display board
-        if action == "B": 
+        if action == "E":
+            print(message[1:])
+            client_input = ask_input("Enter card to be passed: ")
+            if client_input == 'F' or client_input == 'T':
+                send_to_server(client_input, p_id)
+            else:
+                send_to_server("P", p_id + client_input)
+            
+        #B-display board
+        elif action == "B": 
             os.system('cls' if os.name == 'nt' else 'clear')
     
             print("askfnkn")
@@ -82,16 +90,19 @@ def start_game():
             print(game.get_board(p_id, p_hand))
 
             client_input = ask_input("Enter card to be passed: ")
-            if client_input != "F" or client_input != "T":
-                send_to_server("P", p_id + client_input)
+            if client_input == 'F' or client_input == 'T':
+                send_to_server(client_input, p_id)
             else:
-                send_to_server(client_input, "")
+                send_to_server("P", p_id + client_input)
+                
             # loop(p_id, message)
             print("Waiting for other players...")
  
             
         elif action == "T":
             print("ssf")
+        else:
+            print(message)
             #do something for tapping 
 
 

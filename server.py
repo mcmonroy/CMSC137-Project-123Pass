@@ -127,8 +127,11 @@ def start_game():
         #     client_input.append(process_input2(receive_input(players[i].get("conn"))))
         
         for i in range(len(players)):
-            client_input = process_input2(receive_input(players[i].get("conn")))
-            if client_input:
+            client_input = process_input(players[i], receive_input(players[i].get("conn")))
+            print(client_input)
+            if client_input[0] == "E":
+                send_data(players[i], client_input, "")
+            else:
                 if "QUIT" in client_input:
                     print("Client is requesting to quit")
                     player.get("conn").close()
@@ -223,13 +226,15 @@ def process_input(player, input_str):
         card_flag = game.check_card(player.get("hand"), client_message)
 
         if card_flag == True:
-            message = "P" + str(player.get("id")) + client_message
+            return client_message
         else:
             data = "The code does not match with any of your cards on hand"
-            player.get("conn").send(bytes(data, 'utf8'))
+            send_data(player, "E", data)
+            # player.get("conn").send(bytes(data, 'utf8'))
     else:
         data = "Invalid input!"
-        player.get("conn").send(bytes(data, 'utf8'))
+        send_data(player, "E", data)
+        # player.get("conn").send(bytes(data, 'utf8'))
 
     return message
 
