@@ -9,6 +9,8 @@ import game
 import atexit
 
 
+    # infinite loop- do not reset for every requests
+
 if len(sys.argv) == 1:
     HOST = '0.0.0.0'
 else:
@@ -25,11 +27,10 @@ passed_already = False
 
 max_players = int(input("Enter max no. of players: "))
 
-def main():
-    start_server()
 
 
 def start_server():
+
     soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)   # SO_REUSEADDR flag tells the kernel to reuse a local socket in TIME_WAIT state, without waiting for its natural timeout to expire
     print("Socket created")
@@ -62,7 +63,6 @@ def start_server():
                 #creating threads
                 for i in range (len(players)):
                     players[i]['hand']=game.generate_hand(deck)
-
                 start_game() #cards per player
                     #     # print(players[i])
                     #     Thread(target=client_thread, args=(players[i],)).start()
@@ -75,6 +75,12 @@ def start_server():
         atexit.register(close_socket, soc)                    
     
     soc.close()
+
+
+   
+def main():
+    start_server()    
+
 
 def close_socket(soc):
     soc.close()
@@ -99,80 +105,89 @@ def send_data(player, action, data):
     player.get("conn").send(bytes(message, 'utf8'))
 
 def send_board():
-    for i in range len(players):
-        send_data(player[i], "B", player[i].get("id") + "|" + str(player[i].get("hand")))
+    for i in range (len(players)):
+        send_data(players[i], "B", players[i].get("id") + "|" + str(players[i].get("hand")))
 
-def remove_card(id, player):
+def remove_card(player, card):
+    player.get("hand").remove(card)
+    print(player.get("hand"))
 
+                
 
 def start_game():
     global win_flag
     global passed_already
     in_game = True
-
+    soc = socket
     send_board()
 
     while in_game:
-        client_input = process_input2(receive_input(player.get("conn")))
-        if "QUIT" in client_input:
-            print("Client is requesting to quit")
-            player.get("conn").close()
-            print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
-            is_active = False
-            in_game = False
-        else:
-            if 'P' in client_input:
-                client_input = client_input.split("|")
-                p_id = client_input[1][0]
-                card = client_input[1][1:]
-                turn_cards.update({ p_id : card })
-                
-                print(turn_cards)
-                remove_card(p_id)
-                # ----------------------------------------------------------------------------------
-                player.get("hand").remove(client_input[1][1:])
-                print(player.get("hand"))
-
-                if len(turn_cards) == max_players and not passed_already:
-                    pass_cards()
-                    passed_already = True
-                    turn_cards.clear()
-                
-                
-                    # print("{}".format(client_input))
-                if passed_already:
-                    send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
-                    # player.get("conn").sendall("-".encode("utf8"))
-
-            elif 'F' in client_input:
-                if win_flag == True:
-                    data = "Boo"
-                    player.get("conn").send(bytes(data, 'utf8'))
+        # client_input = []
+        # for i in range(len(players)):
+        #     client_input.append(process_input2(receive_input(players[i].get("conn"))))
+        
+        for i in range(len(players)):
+            client_input = process_input2(receive_input(players[i].get("conn")))
+            if client_input:
+                if "QUIT" in client_input:
+                    print("Client is requesting to quit")
+                    player.get("conn").close()
+                    print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
+                    is_active = False
+                    in_game = False
                 else:
-                    win_flag = game.check_win(player.get("hand"))
+                    if 'P' in client_input:
+                        client_input = client_input.split("|")
+                        p_id = client_input[1][0]
+                        card = client_input[1][1:]
+                        turn_cards.update({ p_id : card })
+                        
+                        print(turn_cards)
+                        print(p_id, card)
+                        remove_card(players[int(p_id)-1], card)
+                        # ----------------------------------------------------------------------------------
+                        
+                        if len(turn_cards) == max_players:
+                         # and not passed_already:
+                            pass_cards()
+                            # passed_already = True
+                            turn_cards.clear()
+                            send_board()
+                        
+                            # print("{}".format(client_input))
+                        # if passed_already:
+                        #     send_data(player, "B", player.get("id") + "|" + str(player.get("hand")))
+                        #     # player.get("conn").sendall("-".encode("utf8"))
 
-                    if win_flag == True:
-                        data = "Grats"
-                        player.get("conn").send(bytes(data, 'utf8'))
-                        player["win"] = 1
-                        print(player.get("win"))
-                    else:
-                        data = "Boo"
-                        player.get("conn").send(bytes(data, 'utf8'))
+                    elif 'F' in client_input:
+                        if win_flag == True:
+                            data = "Boo"
+                            player.get("conn").send(bytes(data, 'utf8'))
+                        else:
+                            win_flag = game.check_win(player.get("hand"))
 
-                print("{}".format(client_input))
-                player.get("conn").sendall("-".encode("utf8"))
-            elif 'T' in client_input:
-                if win_flag == True:
-                    data = "Grats"
-                    player.get("conn").send(bytes(data, 'utf8'))
-                else:
-                    data = "Boo"
-                    player.get("conn").send(bytes(data, 'utf8'))
+                            if win_flag == True:
+                                data = "Grats"
+                                player.get("conn").send(bytes(data, 'utf8'))
+                                player["win"] = 1
+                                print(player.get("win"))
+                            else:
+                                data = "Boo"
+                                player.get("conn").send(bytes(data, 'utf8'))
 
-                print("{}".format(client_input))
-                d = "-" + "|" + player.get("id") + "|" + str(player.get("hand"))
-                player.get("conn").sendall(d.encode("utf8"))
+                        print("{}".format(client_input))
+                        player.get("conn").sendall("-".encode("utf8"))
+                    elif 'T' in client_input:
+                        if win_flag == True:
+                            data = "Grats"
+                            player.get("conn").send(bytes(data, 'utf8'))
+                        else:
+                            data = "Boo"
+                            player.get("conn").send(bytes(data, 'utf8'))
+
+                        print("{}".format(client_input))
+                        d = "-" + "|" + player.get("id") + "|" + str(player.get("hand"))
+                        player.get("conn").sendall(d.encode("utf8"))
 
         #---------------------------------------------------------------
     # board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
@@ -233,16 +248,18 @@ def start_game():
 
     return is_active
 
-def receive_input(connection):
-    client_input = connection.recv(BUFFER)
-    client_input_size = sys.getsizeof(client_input)
+def receive_input(conn):
+    client_input = str(conn.recv(BUFFER), 'utf-8')
+    return client_input
+    # client_input = soc.recv(BUFFER)
+    # client_input_size = sys.getsizeof(client_input)
 
-    if client_input_size > BUFFER:
-        print("The input size is greater than expected {}".format(client_input_size))
+    # if client_input_size > BUFFER:
+    #     print("The input size is greater than expected {}".format(client_input_size))
 
-    decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
+    # decoded_input = client_input.decode("utf8").rstrip()  # decode and strip end of line
 
-    return decoded_input
+    # return decoded_input
 def process_input2(input_str):
     input_str = input_str.upper()
     return input_str
