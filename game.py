@@ -48,35 +48,35 @@ def generate_hand(deck_list):
 
 	return hand
 
-# def display_board(players, num):
-# 	print("***************************************")
-# 	for i in range(len(players)):
-# 		print(players[i].get("id") + "\t"),
-# 	print("")
-# 	for i in range(len(players)):
-# 		print(str(players[i].get("win")) + "\t"),
-# 	print("")
-# 	print("---------------------------------------")
-# 	print("You are " + players[num].get("id"))
-# 	print("---------------------------------------")
-# 	for i in range(len(players[num].get("hand"))):
-# 		print(players[num].get("hand")[i] + "\t"),
-# 	print("")
-# 	print("***************************************")
+def display_board(players, num):
+	print("***************************************")
+	for i in range(len(players)):
+		print(players[i].get("id") + "\t"),
+	print("")
+	for i in range(len(players)):
+		print(str(players[i].get("win")) + "\t"),
+	print("")
+	print("---------------------------------------")
+	print("You are " + players[num].get("id"))
+	print("---------------------------------------")
+	for i in range(len(players[num].get("hand"))):
+		print(players[num].get("hand")[i] + "\t"),
+	print("")
+	print("***************************************")
 
-def get_board(player_id, player_hand):
-	board = ""
-	board+="***************************************\n"
-	# print(players[i].get("id") + "\t"),
-	# print("")
-	# print(str(players[i].get("win")) + "\t"),
-	# print("")
-	board+="---------------------------------------\n"
-	board+="You are P" + player_id + "\n"
-	board+="---------------------------------------\n"
-	board+=str(player_hand) + "\n"
-	board+=""
-	board+="***************************************\n"
+def get_board(players, num):
+	board = "***************************************\n"
+	for i in range(len(players)):
+		board += "P" + str(players[i].get("id")) + "\t"
+	board += "\n"
+	for i in range(len(players)):
+		board += str(players[i].get("win")) + "\t"
+	board += "\n---------------------------------------\n"
+	board += "You are P" + str(num + 1) + "\n"
+	board += "---------------------------------------\n"
+	for i in range(len(players[num].get("hand"))):
+		board += str(players[num].get("hand")[i]) + "\t"
+	board += "\n***************************************\n"
 
 	return board
 

@@ -4,6 +4,104 @@ import socket
 import sys
 import game
 
+def show_menu():
+    print("***************************************")
+    print("\t1-2-3-Pass!")
+    print("***************************************")
+    print("\t[1] How to play\n\t[2] Play Game\n\t[3] Quit")
+    
+    choice = int(input("Choice: "))
+
+    if choice == 2:
+        return False
+    elif choice == 3:
+        print("Bye!")
+        exit()
+    elif choice == 1:
+        how_to_play()
+        return True
+    else:
+        print("Invalid choice!")
+        return True
+
+def how_to_play():
+    print("***************************************")
+    print("\tHOW TO PLAY")
+    print("***************************************")
+    print("* Enter the card you wish to pass. If *")
+    print("* you have already completed a set of *")
+    print("* the same rank and of the four suits,*")
+    print("* enter 'F' to indicate your finish.  *")
+    print("* If another player finishes first,   *")
+    print("* enter 'T' to tap. The first player  *")
+    print("* to finish is the winner and the last*")
+    print("* player to tap loses.                *")
+    print("***************************************")
+
+def receive_input():
+    msg = str(soc.recv(BUFFER), 'utf-8')
+    return msg
+
+def ask_input():
+    client_input = str(input("Enter card to be passed: "))
+    send_to_server(client_input)
+    return client_input
+
+def send_to_server(message):
+    soc.sendall(bytes(message, 'utf-8'))
+
+# def print_board(msg):
+#     d_str = msg[1:].split("|")
+#     p_id = d_str[0]
+#     p_hand = d_str[1]
+#     print(game.get_board(p_id, p_hand))
+
+def start_game():
+    message = ""
+
+    while message != 'QUIT':
+        msg = receive_input() #prints board
+        print(msg)
+
+        while True: #loop asking for input until client gives the correct input
+            message = ask_input().upper()
+            print("Passed " + message)
+
+            if message == "QUIT":
+                print("Bye!")
+                exit()
+            else:
+                msg = receive_input()
+                print(msg)
+                validate = msg.split("|")
+                print(validate[1]) #message to be displayed
+
+                if "True" in validate[0]: # gets out of loop if true is in received input
+                    break
+
+                msg = receive_input()
+                print(msg)
+
+
+        print("Waiting for other players...")
+
+        print(receive_input())
+
+        # data = soc.recv(BUFFER)
+        # print(str(data, 'utf-8'))
+        # while (soc.recv())
+
+        # if soc.recv(BUFFER).decode("utf8") == "-":
+        #     pass        # null operation
+
+        # soc.sendall(message.encode("utf8"))
+
+    soc.send(b'--quit--')
+
+def main():
+    print("Waiting for all players to connect...\n")
+    start_game()
+
 soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 if len(sys.argv) == 1:
     print("Proper usage: python/python3 mult_client.py <ip_address_of_server>")
@@ -17,105 +115,16 @@ PORT = 8888
 SERVER = (HOST, PORT)
 BUFFER = 5120
 
-menu = True
-
-while menu:
-    print("***************************************")
-    print("\t1-2-3-Pass!")
-    print("***************************************")
-    print("\t[1] How to play\n\t[2] Play Game\n\t[3] Quit")
-    
-    choice = int(input("Choice: "))
-
-    if choice == 2:
-        menu = False
-    elif choice == 3:
-        print("Bye!")
-        exit()
-    elif choice == 1:
-        print("***************************************")
-        print("\tHOW TO PLAY")
-        print("***************************************")
-        print("* Enter the card you wish to pass. If *")
-        print("* you have already completed a set of *")
-        print("* the same number and of the four sui-*")
-        print("* ts, enter 'F' to signify your fini- *")
-        print("* sh. If another player finishes first*")
-        print("* enter 'T' to tap. The first to fini-*")
-        print("* sh is the winner and the last to tap*")
-        print("* loses.                              *")
-        print("***************************************")
-
-
 try:
     soc.connect((SERVER))
 except:
     print("Connection error")
     sys.exit()
 
-def main():
+menu = True
 
-    print("Waiting for all players to connect...\n")
-    msg = receive_input()
-    
-    action = msg[0]
-    message = ""
-    
-    #B-display board
-    if action == "B": 
-        print("askfnkn")
-        d_str = msg[1:].split("|")
-        p_id = d_str[0]
-        p_hand = d_str[1]
-        print(game.get_board(p_id, p_hand))
-        message = ask_input("c")
-        loop(p_id, message)
-        
-    elif action == "T":
-        print("ssf")
-        #do something for tapping 
-
-    
-def loop(p_id, message):
-    while message != 'quit':
-        send_to_server(message)
-        print(receive_input())
-        print("Waiting for other players...")
-
-        # data = soc.recv(BUFFER)
-        # print(str(data, 'utf-8'))
-        # while (soc.recv())
-
-        # if soc.recv(BUFFER).decode("utf8") == "-":
-        #     pass        # null operation
-
-        msg = receive_input()
-
-        d_str = msg[1:].split("|")
-        p_id = d_str[0]
-        p_hand = d_str[1]
-        print(game.get_board(p_id, p_hand))
-        message = ask_input("c")
-
-        # soc.sendall(message.encode("utf8"))
-       
-
-
-    soc.send(b'--quit--')
-
-
-def receive_input():
-    msg = str(soc.recv(BUFFER), 'utf-8')
-    return msg
-
-def ask_input(i_type):
-    if i_type == "c":
-        client_input = input("Enter card to be passed: ")
-    send_to_server(client_input)
-    return client_input
-
-def send_to_server(message):
-    soc.sendall(bytes(message, 'utf-8'))
+while menu:
+    menu = show_menu()
 
 if __name__ == "__main__":
     main()
