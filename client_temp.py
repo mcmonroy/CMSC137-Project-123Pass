@@ -1,4 +1,4 @@
-# server-client code reference: https://kuntalchandra.wordpress.com/2017/08/23/python-socket-programming-server-client-application-using-threads/
+    # server-client code reference: https://kuntalchandra.wordpress.com/2017/08/23/python-socket-programming-server-client-application-using-threads/
 
 import socket
 import sys
@@ -58,6 +58,7 @@ def send_to_server(message):
 
 def start_game():
     message = ""
+    validate = ""
 
     while message != 'QUIT':
         msg = receive_input() #prints board
@@ -84,6 +85,10 @@ def start_game():
 
 
         print("Waiting for other players...")
+
+        if "tap" in validate[1]:
+            message = ask_input().upper()
+
 
         print(receive_input())
 
