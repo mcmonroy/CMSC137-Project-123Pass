@@ -64,3 +64,14 @@ MGA KAILANGAN PANG  GAWIN:
 * sh is the winner and the last to tap*
 * looses.                             *
 ***************************************
+
+MGA KAILANGAN PANG GAWIN (v2):
+
+> end game detection, F and T options (di pa nanonotify yung ibang players na may nakatapos na)
+
+> magulo pa yung synchronization ng send at receive ng data (pero hinihintay na pag magpapass ng card)
+	may cases pa na naghihintay si client ng data pero wala namang isesend si server (blank screen)
+
+> data flow diagram
+
+> maayos na pag close ni server

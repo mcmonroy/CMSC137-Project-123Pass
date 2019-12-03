@@ -8,23 +8,6 @@ from threading import Thread
 import game
 import atexit
 
-
-if len(sys.argv) == 1:
-    HOST = '0.0.0.0'
-else:
-    HOST = sys.argv[1]
-
-PORT = 8888         # arbitrary non-privileged port
-SERVER = (HOST, PORT)
-BUFFER = 5120
-
-players = []
-turn_cards = {} # will hold the cards to be passed
-win_flag = False
-passed_already = False
-
-max_players = int(input("Enter max no. of players: "))
-
 def main():
     start_server()
 
@@ -72,9 +55,6 @@ def start_server():
     
     soc.close()
 
-def close_socket(soc):
-    soc.close()
-
 def client_thread(player, max_buffer_size=5120):
     global passed_already
     is_active = True
@@ -83,79 +63,96 @@ def client_thread(player, max_buffer_size=5120):
         is_active = start_game(player, max_buffer_size, is_active)
         passed_already = False
 
-
-def pass_cards():
-
-    for player in players:
-        p_id = int(player.get("id"))
-        index = str((p_id % max_players) + 1) #id ng pagkukuhaan nung pinasang card sa kanya
-        player.get("hand").append(turn_cards.get(index))
-
+def close_socket(soc):
+    soc.close()
 
 def start_game(player, max_buffer_size, is_active):
     global win_flag
     global passed_already
+    global win
     # passing of board to players
     #data = game.get_board(player)
 
-    board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
-    player.get("conn").send(bytes(board_data, 'utf8'))
+    # board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
+    # player.get("conn").send(bytes(board_data, 'utf8'))
 
-    client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
+    while is_active:
+        send_board(player)
+        client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
 
-    if "--QUIT--" in client_input:
-        print("Client is requesting to quit")
-        player.get("conn").close()
-        print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
-        is_active = False
-    else:
-        if 'P' in client_input:
-            turn_cards.update({ client_input[1] : client_input[2:] })
-            
-            print(turn_cards)
-            player.get("hand").remove(client_input[2:])
-            print(player.get("hand"))
+        if "QUIT" in client_input:
+            print("Client is requesting to quit")
+            player.get("conn").close()
+            print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
+            is_active = False
+        else:
+            if 'P' in client_input:
+                turn_cards.update({ client_input[1] : client_input[2:] })
+                
+                print(turn_cards)
+                player.get("hand").remove(client_input[2:])
+                print(player.get("hand"))
 
-            if len(turn_cards) == max_players and not passed_already:
-                pass_cards()
-                passed_already = True
-                turn_cards.clear()
-            
-                print("{}".format(client_input))
-                # player.get("conn").sendall("-".encode("utf8"))
-                deck = player.get("id") + "|" + str(player.get("hand"))
-                player.get("conn").send(bytes(deck, 'utf8'))
+                data = "True|" + game.get_board(players, int(player.get("id")) - 1)
+                send_data(player, data)
 
-        elif 'F' in client_input:
-            if win_flag == True:
-                data = "Someone already finished, enter 'T' to tap"
-                player.get("conn").send(bytes(data, 'utf8'))
-            else:
-                win_flag = game.check_win(player.get("hand"))
+                while len(turn_cards) <= max_players and not passed_already:
+                    if win_flag == True:
+                        data = "True|Someone already finished, enter 'T' to tap"
+                        send_data(player, data)
+                        break
 
+                    if len(turn_cards) == max_players:
+                        data = "All players ready, 1-2-3 Pass!"
+                        send_data(player, data)
+
+                        pass_cards()
+                        passed_already = True                     
+                        # print("{}".format(client_input))
+                        # player.get("conn").sendall("-".encode("utf8"))
+            elif 'F' in client_input:
                 if win_flag == True:
-                    data = "Congratulations, you win!"
-                    player.get("conn").send(bytes(data, 'utf8'))
-                    player["win"] = 1
-                    print(player.get("win"))
+                    data = "False|Someone already finished, enter 'T' to tap"
+                    send_data(player, data)
                 else:
-                    data = "Hand incomplete, try again \n Winning conditions still not met"
-                    player.get("conn").send(bytes(data, 'utf8'))
+                    win_flag = game.check_win(player.get("hand"))
 
-            print("{}".format(client_input))
-            player.get("conn").sendall("-".encode("utf8"))
-        elif 'T' in client_input:
-            if win_flag == True:
-                data = "Tap successful"
-                player.get("conn").send(bytes(data, 'utf8'))
-            else:
-                data = "Tap invalid, there is no winner yet"
-                player.get("conn").send(bytes(data, 'utf8'))
+                    if win_flag == True:
+                        data = "True|Congratulations, you win!"
+                        send_data(player, data)
 
-            print("{}".format(client_input))
-            player.get("conn").sendall("-".encode("utf8"))
+                        player["win"] = win
+                        win += 1
+                    else:
+                        data = "False|Hand incomplete, try again \nWinning conditions still not met"
+                        send_data(player, data)
 
+            elif 'T' in client_input:
+                if win_flag == True:
+                    data = "True|Tap successful"
+
+                    if win == max_players:
+                        data += "\nYou tapped last, you lose"
+                    
+                    send_data(player, data)
+                        
+                    player["win"] = win
+                    win += 1
+
+                else:
+                    data = "False|Tap invalid, there is no winner yet"
+                    send_data(player, data)
+
+            turn_cards.clear()
+            passed_already = False
     return is_active
+
+def send_data(player, data):
+    player.get("conn").send(bytes(data, 'utf8'))
+
+def send_board(player):
+        data = game.get_board(players, int(player.get("id")) - 1)
+        send_data(player, data)
 
 def receive_input(connection, max_buffer_size):
     client_input = connection.recv(max_buffer_size)
@@ -169,28 +166,59 @@ def receive_input(connection, max_buffer_size):
     return decoded_input
 
 def process_input(player, input_str):
-    # print("Processing the input received from client")
-    card_flag = False
+    print("Processing the input received from client...")
     message = ''
+    card_flag = False
 
     client_message = str(input_str).upper()
     print(client_message)
 
-    if client_message == 'F' or client_message == 'T' or client_message == "--QUIT--":
+    if client_message == 'F' or client_message == 'T' or client_message == "QUIT":
         return client_message
-    elif client_message != 'F' and client_message != 'T' and client_message != "--QUIT--":
+    elif client_message != 'F' and client_message != 'T' and client_message != "QUIT":
         card_flag = game.check_card(player.get("hand"), client_message)
 
         if card_flag == True:
             message = "P" + str(player.get("id")) + client_message
         else:
-            data = "The code does not match with any of your cards on hand"
-            player.get("conn").send(bytes(data, 'utf8'))
+            data = "False|The code does not match with any of your cards on hand"
+            send_data(player, data)
     else:
-        data = "Invalid input!"
-        player.get("conn").send(bytes(data, 'utf8'))
+        data = "False|Invalid input!"
+        send_data(player, data)
 
     return message
+
+def pass_cards():
+    for player in players:
+        print(turn_cards)
+        p_id = int(player.get("id"))
+        index = str((p_id % max_players) + 1) #id ng pagkukuhaan nung pinasang card sa kanya
+        if turn_cards.get(index) in player.get("hand") or turn_cards.get(index) == None:
+            continue
+        else:
+            player.get("hand").append(turn_cards.get(index))
+            print("awawa")
+        print(player.get("hand"))
+
+############################ END OF FUNCTION DEFINITIONS #############################
+
+if len(sys.argv) == 1:
+    HOST = '0.0.0.0'
+else:
+    HOST = sys.argv[1]
+
+PORT = 8888         # arbitrary non-privileged port
+SERVER = (HOST, PORT)
+BUFFER = 5120
+
+players = []
+turn_cards = {} # will hold the cards to be passed
+win_flag = False
+passed_already = False
+win = 1
+
+max_players = int(input("Enter max no. of players: "))
 
 if __name__ == "__main__":
     main()
