@@ -110,6 +110,10 @@ if len(sys.argv) == 1:
 else:
     HOST = sys.argv[1]
 
+menu = True
+
+while menu:
+    menu = show_menu()
 
 PORT = 8888
 SERVER = (HOST, PORT)
@@ -121,10 +125,6 @@ except:
     print("Connection error")
     sys.exit()
 
-menu = True
-
-while menu:
-    menu = show_menu()
 
 if __name__ == "__main__":
     main()
