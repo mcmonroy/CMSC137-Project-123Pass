@@ -103,7 +103,7 @@ def start_game(player, max_buffer_size, is_active):
                         break
 
                     if len(turn_cards) == max_players:
-                        data = "All players ready, 1-2-3 Pass!"
+                        data = "True|All players ready, 1-2-3 Pass!"
                         send_data(player, data)
 
                         pass_cards()
