@@ -51,10 +51,11 @@ def send_to_server(message):
     soc.sendall(bytes(message, 'utf-8'))
 
 def start_game():
+    in_game = True
     message = ""
     validate = ""
 
-    while message != 'QUIT':
+    while in_game:
         msg = receive_input() #prints board 
         #1rcv
         print(msg)
@@ -72,21 +73,26 @@ def start_game():
                 validate = msg.split("|")
                 print(validate[1]) #message to be displayed
 
+                if ("Congratulations" in validate[1]) or ("successful" in validate[1]) or ("you lose" in validate[1]):
+                    in_game = False
+
                 if "True" in validate[0]: # gets out of loop if true is in received input
                     break
 
                 msg = receive_input()
                 print(msg)
 
+
+
         print("Waiting for other players...")
 
-        if "tap" in validate[1]:
+        if "Someone already finished, enter 'T' to tap" in validate[1]:
             message = ask_input().upper()
 
         message = receive_input()#4rcv
         print(message)
-
-    soc.send(b'--quit--')
+    print("client out of while loop")
+    soc.send(b'quit')
 
 def main():
     print("Waiting for all players to connect...\n")

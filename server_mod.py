@@ -81,7 +81,7 @@ def start_game(player, max_buffer_size, is_active):
         if "QUIT" in client_input:
             print("Client is requesting to quit")
             player.get("conn").close()
-            del players[player.get("id")-1]
+            del players[int(player.get("id"))-1]
             print("Connection " + str(player.get("address")[0]) + ":" + str(player.get("address")[1]) + " closed")
             is_active = False
         else:
@@ -97,14 +97,14 @@ def start_game(player, max_buffer_size, is_active):
 
                 while len(turn_cards) <= max_players and not passed_already:
                     if win_flag == True:
-                        data = "True|Someone already finished, enter 'T' to tap"
+                        data = "True|Someone already finished, enter 'T' to tap\n"
                         send_data(player, data)
                         # client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
 
                         break
 
                     if len(turn_cards) == max_players:
-                        data = "True|All players ready, 1-2-3 Pass!"
+                        data = "True|All players ready, 1-2-3 Pass!\n"
                         send_data(player, data)#4send
 
                         pass_cards()
@@ -113,13 +113,13 @@ def start_game(player, max_buffer_size, is_active):
                         # player.get("conn").sendall("-".encode("utf8"))
             elif 'F' in client_input:
                 if win_flag == True:
-                    data = "False|Someone already finished, enter 'T' to tap"
+                    data = "False|Someone already finished, enter 'T' to tap\n"
                     send_data(player, data)
                 else:
                     win_flag = game.check_win(player.get("hand"))
 
                     if win_flag == True:
-                        data = "True|Congratulations, you win!"
+                        data = "True|Congratulations, you win!\n"
                         send_data(player, data)
 
                         player["win"] = win
@@ -134,27 +134,32 @@ def start_game(player, max_buffer_size, is_active):
                         #     if players[i].get("conn") !=  player.get("conn"):
                         #         send_data(players[i], "True|Someone already finished, enter 'T' to tap.")
                     else:
-                        data = "False|Hand incomplete, try again \nWinning conditions still not met"
+                        data = "False|Hand incomplete, try again \nWinning conditions still not met\n"
                         send_data(player, data)
 
             elif 'T' in client_input:
                 if win_flag == True:
-                    data = "True|Tap successful"
+                    data = "True|Tap successful\n"
 
                     if win == max_players:
-                        data += "\nYou tapped last, you lose"
+                        data += "\nYou tapped last, you lose\n"
+                        # send_data(player, "QUIT")
+                        
                     
                     send_data(player, data)
                         
                     player["win"] = win
                     win += 1
 
-                    send_board(player)
+                    send_data(player, "QUIT")
+                        
+
+                    # send_board(player)
                     # is_active=False
-                    break
+                    # break
 
                 else:
-                    data = "False|Tap invalid, there is no winner yet"
+                    data = "False|Tap invalid, there is no winner yet\n"
                     send_data(player, data)
 
             turn_cards.clear()
