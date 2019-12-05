@@ -54,49 +54,65 @@ def start_game():
     in_game = True
     message = ""
     validate = ""
+    validate_quit = ""
 
     while in_game:
-        msg = receive_input() #prints board 
+        # print("jet ammo")
+        msg = receive_input() #prints board for every turn
         #1rcv
         print(msg)
 
         while True: #loop asking for input until client gives the correct input
             message = ask_input().upper() #2send
-            print("Passed " + message)
+            print("Passed " + message + "\n")
 
             if message == "QUIT":
                 print("Bye!")
                 exit()
             else:
                 msg = receive_input() #3rcv
-                # print(msg)
+                print("beep boop")
+                print(msg)
                 validate = msg.split("|")
                 print(validate[1]) #message to be displayed
+                print("owh baket?")
 
-                if ("Congratulations" in validate[1]) or ("successful" in validate[1]) or ("you lose" in validate[1]):
-                    in_game = False
+                # if ("Congratulations" in validate[1]) or ("successful" in validate[1]) or ("you lose" in validate[1]):
+                #     in_game = False
 
                 if "True" in validate[0]: # gets out of loop if true is in received input
                     break
 
-                msg = receive_input()
+                msg = receive_input() #prints board if input is invalid
                 print(msg)
-
+                print("ano na?")
 
 
         print("Waiting for other players...")
+        print("pabalik-balik?")
 
-        if "Someone already finished, enter 'T' to tap" in validate[1]:
-            message = ask_input().upper()
+        # if "Someone already finished, enter 'T' to tap" in validate[1]:
+        #     message = ask_input().upper()
 
         message = receive_input()#4rcv
         print(message)
-    print("client out of while loop")
+        validate_quit = message.split("|")
+        print(validate_quit[1])
+
+        if "Quit" in validate_quit[0]:
+            print("Game finished, quitting game... Bye!")
+            send_to_server("QUIT")
+            exit()
+        # print("talaga?")
+
+    # print("client out of while loop")
     soc.send(b'quit')
 
 def main():
     print("Waiting for all players to connect...\n")
     start_game()
+
+
 
 soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 if len(sys.argv) == 1:
