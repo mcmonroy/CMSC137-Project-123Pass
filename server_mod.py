@@ -37,13 +37,11 @@ def start_server():
 
             if (len(players)==max_players):  #all expected players have connected
                 deck = game.generate_deck(max_players) 
-                # print(deck)
-              
+                
                 #creating threads
                 for i in range (len(players)):
                     try:
                         players[i]['hand']=game.generate_hand(deck) #cards per player
-                        # print(players[i])
                         Thread(target=client_thread, args=(players[i],)).start()
                     except:
                         print("Thread did not start.")
@@ -66,16 +64,14 @@ def client_thread(player, max_buffer_size=5120):
 def close_socket(soc):
     soc.close()
 
+# def endgame();
+
+
 def start_game(player, max_buffer_size, is_active):
     global win_flag
     global passed_already
     global win
-    # passing of board to players
-    #data = game.get_board(player)
-
-    # board_data = "B" + player.get("id") + "|" + str(player.get("hand"))
-    # player.get("conn").send(bytes(board_data, 'utf8'))
-
+    
     while is_active:
 
         send_board(player)
@@ -129,9 +125,10 @@ def start_game(player, max_buffer_size, is_active):
                         player["win"] = win
                         win += 1
 
-                        send_board(player)
-                        is_active=False
-                        break
+                        # send_board(player)
+                        # is_active=False
+                        send_data(player, "QUIT")
+                        # break
 
                         # for i in range(len(players)):
                         #     if players[i].get("conn") !=  player.get("conn"):
@@ -153,7 +150,7 @@ def start_game(player, max_buffer_size, is_active):
                     win += 1
 
                     send_board(player)
-                    is_active=False
+                    # is_active=False
                     break
 
                 else:
@@ -162,6 +159,7 @@ def start_game(player, max_buffer_size, is_active):
 
             turn_cards.clear()
             passed_already = False
+    print("out of loop")
     return is_active
 
 def send_data(player, data):

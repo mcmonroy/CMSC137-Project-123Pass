@@ -50,12 +50,6 @@ def ask_input():
 def send_to_server(message):
     soc.sendall(bytes(message, 'utf-8'))
 
-# def print_board(msg):
-#     d_str = msg[1:].split("|")
-#     p_id = d_str[0]
-#     p_hand = d_str[1]
-#     print(game.get_board(p_id, p_hand))
-
 def start_game():
     message = ""
     validate = ""
@@ -83,23 +77,13 @@ def start_game():
                 msg = receive_input()
                 print(msg)
 
-
         print("Waiting for other players...")
 
         if "tap" in validate[1]:
             message = ask_input().upper()
 
-
-        print(receive_input())
-
-        # data = soc.recv(BUFFER)
-        # print(str(data, 'utf-8'))
-        # while (soc.recv())
-
-        # if soc.recv(BUFFER).decode("utf8") == "-":
-        #     pass        # null operation
-
-        # soc.sendall(message.encode("utf8"))
+        message = receive_input()
+        print(message)
 
     soc.send(b'--quit--')
 
@@ -115,11 +99,12 @@ if len(sys.argv) == 1:
 else:
     HOST = sys.argv[1]
 
+#-------- printing of menu ----------
 menu = True
-
 while menu:
     menu = show_menu()
 
+#-------- start of socket connection -------
 PORT = 8888
 SERVER = (HOST, PORT)
 BUFFER = 5120
