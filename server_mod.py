@@ -74,8 +74,8 @@ def start_game(player, max_buffer_size, is_active):
     
     while is_active:
 
-        send_board(player)
-
+        send_board(player) #1send
+        #2rcv
         client_input = process_input(player, receive_input(player.get("conn"), max_buffer_size))
 
         if "QUIT" in client_input:
@@ -93,7 +93,7 @@ def start_game(player, max_buffer_size, is_active):
                 print(player.get("hand"))
 
                 data = "True|" + game.get_board(players, int(player.get("id")) - 1)
-                send_data(player, data)
+                send_data(player, data) #3send
 
                 while len(turn_cards) <= max_players and not passed_already:
                     if win_flag == True:
@@ -105,7 +105,7 @@ def start_game(player, max_buffer_size, is_active):
 
                     if len(turn_cards) == max_players:
                         data = "True|All players ready, 1-2-3 Pass!"
-                        send_data(player, data)
+                        send_data(player, data)#4send
 
                         pass_cards()
                         passed_already = True                     

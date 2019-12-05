@@ -55,19 +55,20 @@ def start_game():
     validate = ""
 
     while message != 'QUIT':
-        msg = receive_input() #prints board
+        msg = receive_input() #prints board 
+        #1rcv
         print(msg)
 
         while True: #loop asking for input until client gives the correct input
-            message = ask_input().upper()
+            message = ask_input().upper() #2send
             print("Passed " + message)
 
             if message == "QUIT":
                 print("Bye!")
                 exit()
             else:
-                msg = receive_input()
-                print(msg)
+                msg = receive_input() #3rcv
+                # print(msg)
                 validate = msg.split("|")
                 print(validate[1]) #message to be displayed
 
@@ -82,7 +83,7 @@ def start_game():
         if "tap" in validate[1]:
             message = ask_input().upper()
 
-        message = receive_input()
+        message = receive_input()#4rcv
         print(message)
 
     soc.send(b'--quit--')
