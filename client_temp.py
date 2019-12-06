@@ -71,11 +71,11 @@ def start_game():
                 exit()
             else:
                 msg = receive_input() #3rcv
-                print("beep boop")
+                # print("beep boop")
                 print(msg)
                 validate = msg.split("|")
                 print(validate[1]) #message to be displayed
-                print("owh baket?")
+                # print("owh baket?")
 
                 # if ("Congratulations" in validate[1]) or ("successful" in validate[1]) or ("you lose" in validate[1]):
                 #     in_game = False
@@ -85,11 +85,10 @@ def start_game():
 
                 msg = receive_input() #prints board if input is invalid
                 print(msg)
-                print("ano na?")
-
+                
 
         print("Waiting for other players...")
-        print("pabalik-balik?")
+        # print("pabalik-balik?")
 
         # if "Someone already finished, enter 'T' to tap" in validate[1]:
         #     message = ask_input().upper()

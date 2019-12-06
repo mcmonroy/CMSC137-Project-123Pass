@@ -61,6 +61,8 @@ def client_thread(player, max_buffer_size=5120):
         is_active = start_game(player, max_buffer_size, is_active)
         passed_already = False
 
+    players.clear()
+
 def close_socket(soc):
     soc.close()
 
